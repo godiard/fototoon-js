@@ -7,16 +7,24 @@ define(function (require) {
     var smallScreen = (window.innerWidth < 700) || (window.innerHeight < 600);
     var font = smallScreen ? "16px Arial" : "24px Arial";
 
+    var LINE_WIDTH = 2;
+    var BLACK = "#000000";
+    var WHITE = "#ffffff";
+
+    // Spanish names for historic reasons
+    var DIR_DOWN = "abajo";
+    var DIR_UP = "arriba";
+    var DIR_LEFT = "izq";
+    var DIR_RIGHT = "der";
 
     toon = {};
 
-    function ComicBox(canvas) {
+    function ComicBox(canvas, data) {
 
         this.canvas = canvas;
-        this._width = canvas.width * 0.8;
-        this._height = canvas.height * 0.8;
-        this._margin_x = canvas.width * 0.1;
-        this._margin_y = canvas.height * 0.1;
+        this._data = data;
+        this._width = canvas.width - LINE_WIDTH * 2;
+        this._height = canvas.height - LINE_WIDTH * 2;
 
         this.stage = new createjs.Stage(canvas);
         // Enable touch interactions if supported on the current device
@@ -33,16 +41,25 @@ define(function (require) {
 
             // need a white background to receive the mouse events
             var background = new createjs.Shape();
-            var line_width = 3;
-            background.graphics.setStrokeStyle(line_width, "round");
+            background.graphics.setStrokeStyle(LINE_WIDTH, "round");
             background.graphics.beginStroke(
-                "#000000").drawRect(
-                this._margin_x, this._margin_y,
-                this._width, this._height);
+                BLACK).drawRect(LINE_WIDTH, LINE_WIDTH,
+                                this._width, this._height);
             this.container.hitArea = background;
             this.container.addChild(background);
             this.stage.addChild(this.container);
+            if (this._data != null) {
+                globes = this._data['globes'];
+                for (var n = 0; n < globes.length; n++) {
+                    var globe = new Globe(this, globes[n]);
+                    this.globes.push(globe);
+                }
+            };
             this.stage.update();
+        };
+
+        this.addGlobe = function () {
+            globe = new Globe(this);
         };
 
 
@@ -57,60 +74,103 @@ define(function (require) {
             //var end_cell = this.getCell(event.stageX, event.stageY);
         }, this);
 
+    };
 
-        /*
-        Draw a rounded rectangle over shape
-        star_cell, end_cell = array of integer
-        shape = createjs.Shape
-        color = createjs.Graphics.getRGB
-        */
-        this.markWord = function(start_cell, end_cell, shape, color, fill) {
+    function Globe(box, globeData) {
+        this._box = box;
+        this._stage = box.stage;
+        this._container = box.container;
+        if (globeData == null) {
+            this._x = 100;
+            this._y = 100;
+            this._width = 100;
+            this._height = 50;
+            this._point = [this._width / 2,
+                           this._height / 2];
+            this._radio = 100;
+            this._direction = DIR_DOWN;
+        } else {
+            /* example of the json data stored
 
-            var start_cell_x = start_cell[0];
-            var start_cell_y = start_cell[1];
-            var x1 = start_cell_x * this.cell_size + this.cell_size / 2;
-            var y1 = this.margin_y + start_cell_y * this.cell_size +
-                this.cell_size / 2;
+            {"direction": "abajo", "text_font_description": "Sans 10",
+                 "globe_type": "GLOBE",
+                "text_text": "Hmm, esto parece estar funcionando",
+                "height": 36.66666666666667, "width": 130.0,
+                "text_color": [0, 0, 0], "radio": 30, "mode": "normal",
+                "text_width": 78, "y": 63.0, "x": 202.0,
+                "text_height": 22, "title_globe": false, "point_0": 40.5,
+                "point_1": 54}
+            */
 
-            if (start_cell != end_cell) {
-                var end_cell_x = end_cell[0];
-                var end_cell_y = end_cell[1];
-                var x2 = end_cell_x * this.cell_size + this.cell_size / 2;
-                var y2 = this.margin_y + end_cell_y * this.cell_size +
-                    this.cell_size / 2;
-                var diff_x = x2 - x1;
-                var diff_y = y2 - y1;
-                var angle_rad = Math.atan2(diff_y, diff_x);
-                var angle_deg = angle_rad * 180 / Math.PI;
-                var distance = diff_x / Math.cos(angle_rad);
-                if (Math.abs(angle_deg) == 90) {
-                    distance = Math.abs(diff_y);
-                };
-            } else {
-                var angle_deg = 0;
-                var distance = 0;
+            this._x = globeData['x'];
+            this._y = globeData['y'];
+            this._width = globeData['width'];
+            this._height = globeData['height'];
+            this._point = [globeData['point_0'],
+                           globeData['point_1']];
+            this._radio = globeData['radio'];
+            this._direction = globeData['direction'];
+        };
+
+        this._shape = new createjs.Shape();
+        this._container.addChild(this._shape);
+
+        this.draw = function() {
+            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            this._shape.graphics.beginStroke(BLACK);
+            this._shape.graphics.beginFill(WHITE);
+
+            var scale_x = this._width /this._radio;
+            var scale_y = this._height /this._radio;
+
+            // TODO: direction DOWN only
+            var x = this._x / scale_x;
+            var y = this._y /scale_y;
+
+            switch (this._direction) {
+                case DIR_DOWN:
+                    this._shape.graphics.arc(x, y, this._radio,
+                                             100 / (180.0) * Math.PI,
+                                             80 / (180.0) * Math.PI)
+                    this._shape.graphics.lineTo(
+                        x + this._point[0] / scale_x,
+                        y + this._radio + this._point[1] / scale_y);
+                    break;
+                case DIR_RIGHT:
+                    this._shape.graphics.arc(x, y, this._radio,
+                                             10 / (180.0) * Math.PI,
+                                             350 / (180.0) * Math.PI)
+                    this._shape.graphics.lineTo(
+                        x + this._radio + this._point[0] / scale_x,
+                        y + this._point[1] / scale_y);
+                    break;
+                case DIR_LEFT:
+                    this._shape.graphics.arc(x, y, this._radio,
+                                             190 / (180.0) * Math.PI,
+                                             530 / (180.0) * Math.PI)
+                    this._shape.graphics.lineTo(
+                        x - this._radio - this._point[0] / scale_x,
+                        y + this._point[1] / scale_y);
+                    break;
+                case DIR_UP:
+                    this._shape.graphics.arc(x, y, this._radio,
+                                             280 / (180.0) * Math.PI,
+                                             620 / (180.0) * Math.PI)
+                    this._shape.graphics.lineTo(
+                        x + this._point[0] / scale_x,
+                        y - this._radio - this._point[1] / scale_y);
             };
+            this._shape.graphics.closePath();
 
-            var line_width = this.cell_size / 10;
-            shape.graphics.setStrokeStyle(line_width, "round");
-            if (fill && enableAnimations) {
-                shape.graphics.beginFill(color);
-            } else {
-                shape.graphics.beginStroke(color);
-            };
-            shape.graphics.drawRoundRect(
-                -(this.cell_size - line_width) / 2,
-                -(this.cell_size - line_width) / 2,
-                distance + this.cell_size - line_width,
-                this.cell_size - line_width,
-                this.cell_size / 2);
-            shape.graphics.endStroke();
-            shape.rotation = angle_deg;
-            shape.x = x1;
-            shape.y = y1;
+            this._shape.graphics.endStroke();
+
+            this._shape.setTransform(0, 0,scale_x, scale_y);
+
+            this._stage.update();
         };
 
 
+        this.draw();
     };
 
     toon.ComicBox = ComicBox;
