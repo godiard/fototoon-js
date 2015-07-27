@@ -16,6 +16,7 @@ define(function (require) {
     var DIR_UP = "arriba";
     var DIR_LEFT = "izq";
     var DIR_RIGHT = "der";
+    var SIZE_RESIZE_AREA = 20; // TODO style.GRID_CELL_SIZE / 2
 
     toon = {};
 
@@ -123,9 +124,8 @@ define(function (require) {
             var scale_x = this._width /this._radio;
             var scale_y = this._height /this._radio;
 
-            // TODO: direction DOWN only
             var x = this._x / scale_x;
-            var y = this._y /scale_y;
+            var y = this._y / scale_y;
 
             switch (this._direction) {
                 case DIR_DOWN:
@@ -169,8 +169,57 @@ define(function (require) {
             this._stage.update();
         };
 
+        this.drawControls = function() {
+            var scale_x = this._width / this._radio;
+            var scale_y = this._height / this._radio;
+
+            var x = this._x / scale_x;
+            var y = this._y /scale_y;
+            var w = this._width / scale_x;
+            var h = this._height / scale_y;
+
+            this._shape.graphics.setStrokeStyle(1, "round");
+            this._shape.graphics.setStrokeDash([2]);
+            this._shape.graphics.beginFill("rgba(0, 0, 0, 0)");
+            this._shape.graphics.beginStroke(BLACK);
+            this._shape.graphics.rect(x - w , y - h, w * 2, h * 2);
+            this._shape.graphics.endStroke();
+
+            // point position
+            point_pos = this.getPointPosition();
+            this._shape.graphics.beginStroke(BLACK);
+            this._shape.graphics.arc(point_pos[0], point_pos[1],
+                                     SIZE_RESIZE_AREA / 2,
+                                     0, 2 * Math.PI)
+            this._shape.graphics.endStroke();
+            this._stage.update();
+        };
+
+        this.getPointPosition = function () {
+            var scale_x = this._width / this._radio;
+            var scale_y = this._height / this._radio;
+
+            var x = this._x / scale_x;
+            var y = this._y /scale_y;
+
+            switch (this._direction) {
+                case DIR_DOWN:
+                    return [x + this._point[0] / scale_x,
+                        y + this._radio + this._point[1] / scale_y];
+                case DIR_RIGHT:
+                    return [x + this._radio + this._point[0] / scale_x,
+                        y + this._point[1] / scale_y];
+                case DIR_LEFT:
+                    return [x - this._radio - this._point[0] / scale_x,
+                        y + this._point[1] / scale_y];
+                case DIR_UP:
+                    return [x + this._point[0] / scale_x,
+                        y - this._radio - this._point[1] / scale_y];
+            };
+        };
 
         this.draw();
+        this.drawControls();
     };
 
     toon.ComicBox = ComicBox;
