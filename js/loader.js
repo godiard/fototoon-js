@@ -7,7 +7,7 @@ requirejs.config({
     },
     paths: {
         activity: "../js",
-        easel: "../lib/easeljs-0.7.1.min",
+        easel: "../lib/easeljs-0.8.1.min",
         preload: "../lib/preloadjs-0.4.1.min",
         toon: "../js/toon",
     }
