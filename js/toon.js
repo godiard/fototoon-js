@@ -115,6 +115,8 @@ define(function (require) {
 
         this._shape = new createjs.Shape();
         this._container.addChild(this._shape);
+        this._shapeControls = new createjs.Shape();
+        this._container.addChild(this._shapeControls);
 
         this.draw = function() {
             this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
@@ -170,34 +172,37 @@ define(function (require) {
         };
 
         this.drawControls = function() {
-            var scale_x = this._width / this._radio;
-            var scale_y = this._height / this._radio;
+            var x = this._x;
+            var y = this._y;
+            var w = this._width;
+            var h = this._height;
 
-            var x = this._x / scale_x;
-            var y = this._y /scale_y;
-            var w = this._width / scale_x;
-            var h = this._height / scale_y;
-
-            this._shape.graphics.setStrokeStyle(1, "round");
-            this._shape.graphics.setStrokeDash([2]);
-            this._shape.graphics.beginFill("rgba(0, 0, 0, 0)");
-            this._shape.graphics.beginStroke(BLACK);
-            this._shape.graphics.rect(x - w , y - h, w * 2, h * 2);
-            this._shape.graphics.endStroke();
+            this._shapeControls.graphics.setStrokeStyle(1, "round");
+            this._shapeControls.graphics.beginStroke(WHITE);
+            this._shapeControls.graphics.rect(x - w , y - h, w * 2, h * 2);
+            this._shapeControls.graphics.setStrokeDash([2]);
+            this._shapeControls.graphics.beginFill("rgba(0, 0, 0, 0)");
+            this._shapeControls.graphics.beginStroke(BLACK);
+            this._shapeControls.graphics.rect(x - w , y - h, w * 2, h * 2);
+            this._shapeControls.graphics.endStroke();
 
             // point position
-            point_pos = this.getPointPosition();
-            this._shape.graphics.beginStroke(BLACK);
-            this._shape.graphics.arc(point_pos[0], point_pos[1],
-                                     SIZE_RESIZE_AREA / 2,
+            point_pos = this.getPointPosition(false);
+            this._shapeControls.graphics.beginStroke(BLACK);
+            this._shapeControls.graphics.arc(point_pos[0], point_pos[1],
+                                     SIZE_RESIZE_AREA,
                                      0, 2 * Math.PI)
-            this._shape.graphics.endStroke();
+            this._shapeControls.graphics.endStroke();
             this._stage.update();
         };
 
-        this.getPointPosition = function () {
-            var scale_x = this._width / this._radio;
-            var scale_y = this._height / this._radio;
+        this.getPointPosition = function (scaled) {
+            var scale_x = 1;
+            var scale_y = 1;
+            if (scaled) {
+                scale_x = this._width / this._radio;
+                scale_y = this._height / this._radio;
+            };
 
             var x = this._x / scale_x;
             var y = this._y /scale_y;
