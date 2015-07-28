@@ -52,7 +52,7 @@ define(function (require) {
                 "text_text": "Hmm, esto parece estar funcionando",
                 "height": 36.66666666666667, "width": 130.0,
                 "text_color": [0, 0, 0], "radio": 30, "mode": "normal",
-                "text_width": 78, "y": 63.0, "x": 202.0,
+                "text_width": 78, "y": 163.0, "x": 202.0,
                 "text_height": 22, "title_globe": false, "point_0": 40.5,
                 "point_1": 54}],
                 "img_h": 441},

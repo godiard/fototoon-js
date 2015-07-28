@@ -131,37 +131,28 @@ define(function (require) {
 
             switch (this._direction) {
                 case DIR_DOWN:
-                    this._shape.graphics.arc(x, y, this._radio,
-                                             100 / (180.0) * Math.PI,
-                                             80 / (180.0) * Math.PI)
-                    this._shape.graphics.lineTo(
-                        x + this._point[0] / scale_x,
-                        y + this._radio + this._point[1] / scale_y);
+                    var begin = 100;
+                    var end = 80;
                     break;
                 case DIR_RIGHT:
-                    this._shape.graphics.arc(x, y, this._radio,
-                                             10 / (180.0) * Math.PI,
-                                             350 / (180.0) * Math.PI)
-                    this._shape.graphics.lineTo(
-                        x + this._radio + this._point[0] / scale_x,
-                        y + this._point[1] / scale_y);
+                    var begin = 10;
+                    var end = 350;
                     break;
                 case DIR_LEFT:
-                    this._shape.graphics.arc(x, y, this._radio,
-                                             190 / (180.0) * Math.PI,
-                                             530 / (180.0) * Math.PI)
-                    this._shape.graphics.lineTo(
-                        x - this._radio - this._point[0] / scale_x,
-                        y + this._point[1] / scale_y);
+                    var begin = 190;
+                    var end = 170;
                     break;
                 case DIR_UP:
-                    this._shape.graphics.arc(x, y, this._radio,
-                                             280 / (180.0) * Math.PI,
-                                             620 / (180.0) * Math.PI)
-                    this._shape.graphics.lineTo(
-                        x + this._point[0] / scale_x,
-                        y - this._radio - this._point[1] / scale_y);
+                    var begin = 280;
+                    var end = 260;
             };
+            this._shape.graphics.arc(x, y, this._radio,
+                                     begin / (180.0) * Math.PI,
+                                     end / (180.0) * Math.PI)
+
+            point_pos = this.getPointPosition(true);
+            this._shape.graphics.lineTo(point_pos[0], point_pos[1]);
+
             this._shape.graphics.closePath();
 
             this._shape.graphics.endStroke();
@@ -206,20 +197,22 @@ define(function (require) {
 
             var x = this._x / scale_x;
             var y = this._y /scale_y;
+            var w = this._width / scale_x;
+            var h = this._height /scale_y;
 
             switch (this._direction) {
                 case DIR_DOWN:
                     return [x + this._point[0] / scale_x,
-                        y + this._radio + this._point[1] / scale_y];
+                        y + h + this._point[1] / scale_y];
                 case DIR_RIGHT:
-                    return [x + this._radio + this._point[0] / scale_x,
+                    return [x + w + this._point[0] / scale_x,
                         y + this._point[1] / scale_y];
                 case DIR_LEFT:
-                    return [x - this._radio - this._point[0] / scale_x,
+                    return [x - w - this._point[0] / scale_x,
                         y + this._point[1] / scale_y];
                 case DIR_UP:
                     return [x + this._point[0] / scale_x,
-                        y - this._radio - this._point[1] / scale_y];
+                        y - h - this._point[1] / scale_y];
             };
         };
 
