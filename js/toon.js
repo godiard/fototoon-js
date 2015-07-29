@@ -129,12 +129,17 @@ define(function (require) {
             this._direction = globeData['direction'];
         };
 
-        this._shape = new createjs.Shape();
-        this._stage.addChild(this._shape);
+        this._shape = null;
         this._controls = [];
         this._selected = false;
 
-        this.draw = function() {
+        this.createShape = function() {
+            if (this._shape != null) {
+                console.log('Shape already exists');
+                this._stage.removeChild(this._shape);
+            };
+            this._shape = new createjs.Shape();
+            this._stage.addChild(this._shape);
             this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
             this._shape.graphics.beginStroke(BLACK);
             this._shape.graphics.beginFill(WHITE);
@@ -176,9 +181,33 @@ define(function (require) {
             this._shape.setTransform(0, 0,scale_x, scale_y);
 
             this._stage.update();
+
+            this._shape.on('click', function(event) {
+                if (this._selected) {
+                    this._selected = false;
+                    this._controls.forEach(
+                        function (element, index, array) {
+                            element.visible = false;
+                    });
+                } else {
+                    this._selected = true;
+                    this._controls.forEach(
+                        function (element, index, array) {
+                            element.visible = true;
+                    });
+                };
+                this._stage.update();
+            }, this);
+
         };
 
-        this.drawControls = function() {
+        this.createControls = function() {
+            // remove controls if aready exist
+            this._controls.forEach(
+                function (element, index, array) {
+                    this._stage.removeChild(element);
+            }, this);
+
             var x = this._x;
             var y = this._y;
             var w = this._width;
@@ -203,17 +232,17 @@ define(function (require) {
                                              0, 2 * Math.PI)
             this._shapeControls.graphics.endStroke();
 
-            this._shapeControls.visible = false;
+            this._shapeControls.visible = this._selected;
             this._stage.addChild(this._shapeControls);
             this._controls.push(this._shapeControls);
 
             createAsyncBitmapButton(this, './icons/resize.svg',
                 function(globe, button) {
-                    button.x = globe._x - globe._width;
-                    button.y = globe._y - globe._height;
-                    button.visible = false;
+                    button.x = globe._x - globe._width - button.width / 2;
+                    button.y = globe._y - globe._height - button.height / 2;
+                    button.visible = globe._selected;
                     globe._controls.push(button);
-                    globe._stage.addChildAt(button, 2);
+                    globe._stage.addChildAt(button, 3);
                     globe._stage.update();
 
                     button.on('click', function(event) {
@@ -221,24 +250,41 @@ define(function (require) {
                     });
 
                 });
+
+            createAsyncBitmapButton(this, './icons/object_rotate_right.svg',
+                function(globe, button) {
+                    button.x = globe._x + globe._width - button.width / 2;
+                    button.y = globe._y + globe._height - button.height / 2;
+                    button.visible = globe._selected;
+                    globe._controls.push(button);
+                    globe._stage.addChildAt(button, 3);
+                    globe._stage.update();
+
+                    button.on('click', function(event) {
+                        globe.rotate();
+                    });
+
+                });
         };
 
-        this._shape.on('click', function(event) {
-            if (this._selected) {
-                this._selected = false;
-                this._controls.forEach(
-                    function (element, index, array) {
-                        element.visible = false;
-                });
-            } else {
-                this._selected = true;
-                this._controls.forEach(
-                    function (element, index, array) {
-                        element.visible = true;
-                });
+        this.rotate = function () {
+            switch (this._direction) {
+                case DIR_DOWN:
+                    this._direction = DIR_LEFT;
+                    break;
+                case DIR_RIGHT:
+                    this._direction = DIR_DOWN;
+                    break;
+                case DIR_LEFT:
+                    this._direction = DIR_UP;
+                    break;
+                case DIR_UP:
+                    this._direction = DIR_RIGHT;
+                    break;
             };
-            this._stage.update();
-        }, this);
+            this.createShape();
+            this.createControls();
+        };
 
         this.getPointPosition = function (scaled) {
             var scale_x = 1;
@@ -269,8 +315,8 @@ define(function (require) {
             };
         };
 
-        this.draw();
-        this.drawControls();
+        this.createShape();
+        this.createControls();
     };
 
     toon.ComicBox = ComicBox;
