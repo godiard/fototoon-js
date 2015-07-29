@@ -308,6 +308,8 @@ define(function (require) {
                     this._direction = DIR_RIGHT;
                     break;
             };
+            var i = this._point[0];
+            this._point[0] = this._point[1]; this._point[1] = i;
             this.createShape();
             this.createControls();
         };
