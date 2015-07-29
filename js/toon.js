@@ -16,9 +16,42 @@ define(function (require) {
     var DIR_UP = "arriba";
     var DIR_LEFT = "izq";
     var DIR_RIGHT = "der";
-    var SIZE_RESIZE_AREA = 20; // TODO style.GRID_CELL_SIZE / 2
+    var SIZE_RESIZE_AREA = 40; // TODO style.GRID_CELL_SIZE / 2
 
     toon = {};
+
+    function createAsyncBitmapButton(globe, url, callback) {
+        // creates a square black button with a image inside
+        // is used for the corner controls in the globe
+        var img = new Image();
+        img.cont = null;
+        img.globe = globe;
+
+        img.onload = function () {
+            var bitmap = new createjs.Bitmap(img);
+            bitmap.setBounds(0, 0, img.width, img.height);
+            bounds = bitmap.getBounds();
+            var scale = SIZE_RESIZE_AREA / bounds.height;
+            bitmap.scaleX = scale;
+            bitmap.scaleY = scale;
+
+            if (this.cont == null) {
+                this.cont = new createjs.Container();
+                this.cont.name = 'button';
+                var hitArea = new createjs.Shape();
+                hitArea.graphics.beginFill("#000").drawRect(0, 0,
+                    SIZE_RESIZE_AREA, SIZE_RESIZE_AREA);
+                this.cont.width = SIZE_RESIZE_AREA;
+                this.cont.height = SIZE_RESIZE_AREA;
+                this.cont.hitArea = hitArea;
+                this.cont.addChild(hitArea);
+                this.cont.addChild(bitmap);
+                callback(this.globe, this.cont);
+            };
+        };
+        img.src = url;
+        return img;
+    };
 
     function ComicBox(canvas, data) {
 
@@ -30,25 +63,16 @@ define(function (require) {
         this.stage = new createjs.Stage(canvas);
         // Enable touch interactions if supported on the current device
         createjs.Touch.enable(this.stage);
-        this.stage.mouseChildren = false;
 
-        this.container;
         this.globes = [];
 
         this.init = function () {
-            this.container = new createjs.Container();
-            this.container.x = 0;
-            this.container.y = this.margin_y;
-
-            // need a white background to receive the mouse events
             var background = new createjs.Shape();
             background.graphics.setStrokeStyle(LINE_WIDTH, "round");
             background.graphics.beginStroke(
                 BLACK).drawRect(LINE_WIDTH, LINE_WIDTH,
                                 this._width, this._height);
-            this.container.hitArea = background;
-            this.container.addChild(background);
-            this.stage.addChild(this.container);
+            this.stage.addChild(background);
             if (this._data != null) {
                 globes = this._data['globes'];
                 for (var n = 0; n < globes.length; n++) {
@@ -63,24 +87,16 @@ define(function (require) {
             globe = new Globe(this);
         };
 
-
-        this.stage.on("pressup", function (event) {
+        /*
+        this.stage.on("click", function (event) {
+            console.log('stage click' + event.target);
         }, this);
-
-        this.stage.on('mousedown', function (event) {
-            //var cell = this.getCell(event.stageX, event.stageY);
-        }, this);
-
-        this.stage.on("pressmove", function (event) {
-            //var end_cell = this.getCell(event.stageX, event.stageY);
-        }, this);
-
+        */
     };
 
     function Globe(box, globeData) {
         this._box = box;
         this._stage = box.stage;
-        this._container = box.container;
         if (globeData == null) {
             this._x = 100;
             this._y = 100;
@@ -114,9 +130,9 @@ define(function (require) {
         };
 
         this._shape = new createjs.Shape();
-        this._container.addChild(this._shape);
+        this._stage.addChild(this._shape);
         this._shapeControls = new createjs.Shape();
-        this._container.addChild(this._shapeControls);
+        this._stage.addChild(this._shapeControls);
 
         this.draw = function() {
             this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
@@ -168,6 +184,7 @@ define(function (require) {
             var w = this._width;
             var h = this._height;
 
+            // draw dotted rectangle around the globe
             this._shapeControls.graphics.setStrokeStyle(1, "round");
             this._shapeControls.graphics.beginStroke(WHITE);
             this._shapeControls.graphics.rect(x - w , y - h, w * 2, h * 2);
@@ -181,9 +198,23 @@ define(function (require) {
             point_pos = this.getPointPosition(false);
             this._shapeControls.graphics.beginStroke(BLACK);
             this._shapeControls.graphics.arc(point_pos[0], point_pos[1],
-                                     SIZE_RESIZE_AREA,
-                                     0, 2 * Math.PI)
+                                             SIZE_RESIZE_AREA / 2,
+                                             0, 2 * Math.PI)
             this._shapeControls.graphics.endStroke();
+
+            createAsyncBitmapButton(this, './icons/resize.svg',
+                function(globe, button) {
+                    button.x = globe._x - globe._width;
+                    button.y = globe._y - globe._height;
+                    globe._stage.addChildAt(button, 2);
+                    globe._stage.update();
+
+                    button.on('click', function(event) {
+                        console.log('button clicked' + event.target);
+                    });
+
+                });
+
             this._stage.update();
         };
 
