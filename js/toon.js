@@ -131,8 +131,8 @@ define(function (require) {
 
         this._shape = new createjs.Shape();
         this._stage.addChild(this._shape);
-        this._shapeControls = new createjs.Shape();
-        this._stage.addChild(this._shapeControls);
+        this._controls = [];
+        this._selected = false;
 
         this.draw = function() {
             this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
@@ -184,6 +184,7 @@ define(function (require) {
             var w = this._width;
             var h = this._height;
 
+            this._shapeControls = new createjs.Shape();
             // draw dotted rectangle around the globe
             this._shapeControls.graphics.setStrokeStyle(1, "round");
             this._shapeControls.graphics.beginStroke(WHITE);
@@ -202,10 +203,16 @@ define(function (require) {
                                              0, 2 * Math.PI)
             this._shapeControls.graphics.endStroke();
 
+            this._shapeControls.visible = false;
+            this._stage.addChild(this._shapeControls);
+            this._controls.push(this._shapeControls);
+
             createAsyncBitmapButton(this, './icons/resize.svg',
                 function(globe, button) {
                     button.x = globe._x - globe._width;
                     button.y = globe._y - globe._height;
+                    button.visible = false;
+                    globe._controls.push(button);
                     globe._stage.addChildAt(button, 2);
                     globe._stage.update();
 
@@ -214,9 +221,24 @@ define(function (require) {
                     });
 
                 });
-
-            this._stage.update();
         };
+
+        this._shape.on('click', function(event) {
+            if (this._selected) {
+                this._selected = false;
+                this._controls.forEach(
+                    function (element, index, array) {
+                        element.visible = false;
+                });
+            } else {
+                this._selected = true;
+                this._controls.forEach(
+                    function (element, index, array) {
+                        element.visible = true;
+                });
+            };
+            this._stage.update();
+        }, this);
 
         this.getPointPosition = function (scaled) {
             var scale_x = 1;
