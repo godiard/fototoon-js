@@ -199,6 +199,15 @@ define(function (require) {
                 this._stage.update();
             }, this);
 
+            this._shape.on("pressmove",function(evt) {
+                this._x = evt.stageX;
+                this._y = evt.stageY;
+                this._selected = true;
+                this.createShape();
+                this.createControls();
+                this._stage.update();
+            }, this);
+
         };
 
         this.createControls = function() {
