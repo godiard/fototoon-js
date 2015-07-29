@@ -135,7 +135,6 @@ define(function (require) {
 
         this.createShape = function() {
             if (this._shape != null) {
-                console.log('Shape already exists');
                 this._stage.removeChild(this._shape);
             };
             this._shape = new createjs.Shape();
@@ -234,16 +233,34 @@ define(function (require) {
             this._shapeControls.graphics.endStroke();
 
             // point position
+            this._pointerControl = new createjs.Shape();
             point_pos = this.getPointPosition(false);
-            this._shapeControls.graphics.beginStroke(BLACK);
-            this._shapeControls.graphics.arc(point_pos[0], point_pos[1],
+            this._pointerControl.graphics.beginStroke(BLACK);
+            this._pointerControl.graphics.arc(point_pos[0], point_pos[1],
                                              SIZE_RESIZE_AREA / 2,
-                                             0, 2 * Math.PI)
-            this._shapeControls.graphics.endStroke();
+                                             0, 2 * Math.PI);
+            this._pointerControl.graphics.endStroke();
+
+            var hitArea = new createjs.Shape();
+            hitArea.graphics.beginFill("#000").arc(
+                point_pos[0], point_pos[1], SIZE_RESIZE_AREA / 2,
+                0, 2 * Math.PI);
+            this._pointerControl.hitArea = hitArea;
+
+            this._pointerControl.visible = this._selected;
 
             this._shapeControls.visible = this._selected;
-            this._stage.addChild(this._shapeControls);
+            this._stage.addChild(this._shapeControls, this._pointerControl);
             this._controls.push(this._shapeControls);
+            this._controls.push(this._pointerControl);
+
+            this._pointerControl.on("pressmove",function(evt) {
+                this.setPointPosition(evt.stageX, evt.stageY);
+                this._selected = true;
+                this.createShape();
+                this.createControls();
+                this._stage.update();
+            }, this);
 
             createAsyncBitmapButton(this, './icons/resize.svg',
                 function(globe, button) {
@@ -321,6 +338,26 @@ define(function (require) {
                 case DIR_UP:
                     return [x + this._point[0] / scale_x,
                         y - h - this._point[1] / scale_y];
+            };
+        };
+
+        this.setPointPosition = function (new_x, new_y) {
+            switch (this._direction) {
+                case DIR_DOWN:
+                    this._point[0] = new_x - this._x;
+                    this._point[1] = new_y - this._y - this._height;
+                    break;
+                case DIR_RIGHT:
+                    this._point[0] = new_x - this._x - this._width;
+                    this._point[1] = new_y - this._y;
+                    break;
+                case DIR_LEFT:
+                    this._point[0] = - new_x + this._x - this._width;
+                    this._point[1] = new_y - this._y;
+                    break;
+                case DIR_UP:
+                    this._point[0] = new_x - this._x;
+                    this._point[1] = - new_y + this._y - this._height;
             };
         };
 
