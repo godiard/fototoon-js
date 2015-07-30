@@ -47,11 +47,11 @@ define(function (require) {
                 {"img_w": 589, "img_y": 0, "image_name": "image1.png",
                  "img_x": 0, "slideshow_duration": 10,
                     "globes": [
-                {"direction": "abajo", "text_font_description": "Sans 10",
+                {"direction": "abajo", "text_font_description": "Sans 12",
                  "globe_type": "GLOBE",
                 "text_text": "Hmm, esto parece estar funcionando",
                 "height": 36.66666666666667, "width": 130.0,
-                "text_color": [0, 0, 0], "radio": 30, "mode": "normal",
+                "text_color": [65535, 0, 0], "radio": 30, "mode": "normal",
                 "text_width": 78, "y": 163.0, "x": 202.0,
                 "text_height": 22, "title_globe": false, "point_0": 40.5,
                 "point_1": 54}],

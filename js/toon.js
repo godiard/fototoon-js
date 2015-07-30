@@ -118,7 +118,8 @@ define(function (require) {
                 https://developer.gnome.org/pygtk/stable/class-gdkcolor.html#constructor-gdkcolor
                 */
                 this._text = this._globeData['text_text'];
-                this._font_description = this._globeData['text_font_description'];
+                this._font_description = this.CairoToHtmlFontFormat(
+                    this._globeData['text_font_description']);
                 this._color = this.GdkToHtmlColor(this._globeData['text_color']);
                 this._width = this._globeData['text_width'];
                 this._height = this._globeData['text_height'];
@@ -127,12 +128,15 @@ define(function (require) {
             };
         };
 
-        this.GdkToHtmlColor = function(r, g, b) {
-            // r, g, b are int in the range 0-65535
+        this.GdkToHtmlColor = function(color) {
+            // int array [r, g, b] are int in the range 0-65535
             // returns a str with the format "#rrggbb"
-            rh = (r / 65535 * 16).toString(16);
-            gh = (g / 65535 * 16).toString(16);
-            bh = (b / 65535 * 16).toString(16);
+            rh = (color[0] / 65535 * 255).toString(16);
+            gh = (color[1] / 65535 * 255).toString(16);
+            bh = (color[2] / 65535 * 255).toString(16);
+            if (rh.length < 2) { rh = '0' + rh};
+            if (gh.length < 2) { gh = '0' + gh};
+            if (bh.length < 2) { bh = '0' + bh};
             return "#" + rh + gh + bh;
         };
 
@@ -146,6 +150,15 @@ define(function (require) {
             g = parseInt(rg, 16) / 255 * 65535;
             b = parseInt(rb, 16) / 255 * 65535;
             return [r, g, b];
+        };
+
+        this.CairoToHtmlFontFormat = function(cairoFormat) {
+            // get a str with format "Sans 10"
+            // return a str with format "10px Sans"
+            parts = cairoFormat.split(' ');
+            family = parts[0];
+            size = parts[1];
+            return size + "px " + family;
         };
 
         this.update = function() {
@@ -165,6 +178,7 @@ define(function (require) {
         this.init();
         return this;
     };
+
 
     function Globe(box, globeData) {
         this._box = box;
