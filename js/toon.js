@@ -94,44 +94,121 @@ define(function (require) {
         */
     };
 
+    function Text(globe, globeData) {
+
+        this._globe = globe;
+        this._globeData = globeData;
+
+        this.init = function() {
+
+            if (this._globeData == null) {
+                this._text = '';
+                this._font_description = 'Sans 10';
+                this._color = BLACK;
+                this._width = globe._width - 20;
+                this._height = SIZE_RESIZE_AREA / 2;
+            } else {
+                /* example of the text data in the json globe data stored
+                {"text_font_description": "Sans 10",
+                 "text_text": "Hmm, esto parece estar funcionando",
+                 "text_color": [0, 0, 0],
+                 "text_width": 78, "text_height": 22}
+
+                NOTE: color components are in the range 0-65535
+                https://developer.gnome.org/pygtk/stable/class-gdkcolor.html#constructor-gdkcolor
+                */
+                this._text = this._globeData['text_text'];
+                this._font_description = this._globeData['text_font_description'];
+                this._color = this.GdkToHtmlColor(this._globeData['text_color']);
+                this._width = this._globeData['text_width'];
+                this._height = this._globeData['text_height'];
+
+                this._textView = null;
+            };
+        };
+
+        this.GdkToHtmlColor = function(r, g, b) {
+            // r, g, b are int in the range 0-65535
+            // returns a str with the format "#rrggbb"
+            rh = (r / 65535 * 16).toString(16);
+            gh = (g / 65535 * 16).toString(16);
+            bh = (b / 65535 * 16).toString(16);
+            return "#" + rh + gh + bh;
+        };
+
+        this.HtmlToGdkColor = function(rgb) {
+            // rgb is a str with the format "#rrggbb"
+            // return a array [r, g, b] with int in the range 0-65535
+            rh = rgb.substr(1, 2);
+            gh = rgb.substr(3, 2);
+            bh = rgb.substr(5, 2);
+            r = parseInt(rh, 16) / 255 * 65535;
+            g = parseInt(rg, 16) / 255 * 65535;
+            b = parseInt(rb, 16) / 255 * 65535;
+            return [r, g, b];
+        };
+
+        this.update = function() {
+            if (this._textView != null) {
+                this._globe._stage.removeChild(this._textView);
+            };
+            this._textView = new createjs.Text(this._text,
+                                               this._font_description,
+                                               this._color);
+            this._textView.textAlign = 'center';
+            this._textView.x = this._globe._x;
+            this._textView.y = this._globe._y;
+            this._globe._stage.addChildAt(this._textView, 2);
+            this._globe._stage.update();
+        };
+
+        this.init();
+        return this;
+    };
+
     function Globe(box, globeData) {
         this._box = box;
         this._stage = box.stage;
-        if (globeData == null) {
-            this._x = 100;
-            this._y = 100;
-            this._width = 100;
-            this._height = 50;
-            this._point = [this._width / 2,
-                           this._height / 2];
-            this._radio = 100;
-            this._direction = DIR_DOWN;
-        } else {
-            /* example of the json data stored
 
-            {"direction": "abajo", "text_font_description": "Sans 10",
-                 "globe_type": "GLOBE",
-                "text_text": "Hmm, esto parece estar funcionando",
-                "height": 36.66666666666667, "width": 130.0,
-                "text_color": [0, 0, 0], "radio": 30, "mode": "normal",
-                "text_width": 78, "y": 63.0, "x": 202.0,
-                "text_height": 22, "title_globe": false, "point_0": 40.5,
-                "point_1": 54}
-            */
+        this.init = function() {
+            if (globeData == null) {
+                this._x = 100;
+                this._y = 100;
+                this._width = 100;
+                this._height = 50;
+                this._point = [this._width / 2,
+                               this._height / 2];
+                this._radio = 100;
+                this._direction = DIR_DOWN;
+                this._text = Text(this, null);
+            } else {
+                /* example of the json data stored
 
-            this._x = globeData['x'];
-            this._y = globeData['y'];
-            this._width = globeData['width'];
-            this._height = globeData['height'];
-            this._point = [globeData['point_0'],
-                           globeData['point_1']];
-            this._radio = globeData['radio'];
-            this._direction = globeData['direction'];
+                {"direction": "abajo", "text_font_description": "Sans 10",
+                     "globe_type": "GLOBE",
+                    "text_text": "Hmm, esto parece estar funcionando",
+                    "height": 36.66666666666667, "width": 130.0,
+                    "text_color": [0, 0, 0], "radio": 30, "mode": "normal",
+                    "text_width": 78, "y": 63.0, "x": 202.0,
+                    "text_height": 22, "title_globe": false, "point_0": 40.5,
+                    "point_1": 54}
+                */
+
+                this._x = globeData['x'];
+                this._y = globeData['y'];
+                this._width = globeData['width'];
+                this._height = globeData['height'];
+                this._point = [globeData['point_0'],
+                               globeData['point_1']];
+                this._radio = globeData['radio'];
+                this._direction = globeData['direction'];
+                this._text = Text(this, globeData);
+            };
+
+            this._shape = null;
+            this._controls = [];
+            this._selected = false;
         };
-
-        this._shape = null;
-        this._controls = [];
-        this._selected = false;
 
         this.createShape = function() {
             if (this._shape != null) {
@@ -202,9 +279,7 @@ define(function (require) {
                 this._x = event.stageX;
                 this._y = event.stageY;
                 this._selected = true;
-                this.createShape();
-                this.createControls();
-                this._stage.update();
+                this.update();
             }, this);
 
         };
@@ -257,9 +332,7 @@ define(function (require) {
             this._pointerControl.on("pressmove",function(event) {
                 this.setPointPosition(event.stageX, event.stageY);
                 this._selected = true;
-                this.createShape();
-                this.createControls();
-                this._stage.update();
+                this.update();
             }, this);
 
             createAsyncBitmapButton(this, './icons/resize.svg',
@@ -272,14 +345,12 @@ define(function (require) {
                     globe._stage.update();
 
                     button.on('pressmove', function(event) {
-                        globe._width = Math.max(globe._x - event.stageX,
+                        this._width = Math.max(globe._x - event.stageX,
                                                 SIZE_RESIZE_AREA / 2);
-                        globe._height = Math.max(globe._y - event.stageY,
+                        this._height = Math.max(globe._y - event.stageY,
                                                  SIZE_RESIZE_AREA / 2);
-                        globe.createShape();
-                        globe.createControls();
-                        globe._stage.update();
-                    });
+                        this.update();
+                    }, globe);
 
                 });
 
@@ -316,9 +387,15 @@ define(function (require) {
             };
             var i = this._point[0];
             this._point[0] = this._point[1]; this._point[1] = i;
+            this.update();
+        };
+
+        this.update = function() {
             this.createShape();
             this.createControls();
-        };
+            this._text.update();
+            this._stage.update();
+        }
 
         this.getPointPosition = function (scaled) {
             var scale_x = 1;
@@ -369,8 +446,8 @@ define(function (require) {
             };
         };
 
-        this.createShape();
-        this.createControls();
+        this.init();
+        this.update();
     };
 
     toon.ComicBox = ComicBox;
