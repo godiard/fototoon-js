@@ -198,9 +198,9 @@ define(function (require) {
                 this._stage.update();
             }, this);
 
-            this._shape.on("pressmove",function(evt) {
-                this._x = evt.stageX;
-                this._y = evt.stageY;
+            this._shape.on("pressmove",function(event) {
+                this._x = event.stageX;
+                this._y = event.stageY;
                 this._selected = true;
                 this.createShape();
                 this.createControls();
@@ -254,8 +254,8 @@ define(function (require) {
             this._controls.push(this._shapeControls);
             this._controls.push(this._pointerControl);
 
-            this._pointerControl.on("pressmove",function(evt) {
-                this.setPointPosition(evt.stageX, evt.stageY);
+            this._pointerControl.on("pressmove",function(event) {
+                this.setPointPosition(event.stageX, event.stageY);
                 this._selected = true;
                 this.createShape();
                 this.createControls();
