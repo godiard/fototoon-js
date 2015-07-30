@@ -271,8 +271,12 @@ define(function (require) {
                     globe._stage.addChildAt(button, 3);
                     globe._stage.update();
 
-                    button.on('click', function(event) {
-                        console.log('button clicked' + event.target);
+                    button.on('pressmove', function(event) {
+                        globe._width = globe._x - event.stageX;
+                        globe._height = globe._y - event.stageY;
+                        globe.createShape();
+                        globe.createControls();
+                        globe._stage.update();
                     });
 
                 });
