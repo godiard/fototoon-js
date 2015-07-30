@@ -272,8 +272,10 @@ define(function (require) {
                     globe._stage.update();
 
                     button.on('pressmove', function(event) {
-                        globe._width = globe._x - event.stageX;
-                        globe._height = globe._y - event.stageY;
+                        globe._width = Math.max(globe._x - event.stageX,
+                                                SIZE_RESIZE_AREA / 2);
+                        globe._height = Math.max(globe._y - event.stageY,
+                                                 SIZE_RESIZE_AREA / 2);
                         globe.createShape();
                         globe.createControls();
                         globe._stage.update();
