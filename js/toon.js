@@ -297,10 +297,12 @@ define(function (require) {
                     var end = 260;
             };
 
-            if (this._type != TYPE_RECTANGLE) {
-                this.createShapeGlobe(x, y, begin, end, scale_x, scale_y);
-            } else {
+            if (this._type == TYPE_CLOUD) {
+                this.createShapeCloud(x, y, scale_x, scale_y);
+            } else if (this._type == TYPE_RECTANGLE) {
                 this.createShapeRectangle();
+            } else {
+                this.createShapeGlobe(x, y, begin, end, scale_x, scale_y);
             };
 
             this._shape.on('click', function(event) {
@@ -365,6 +367,63 @@ define(function (require) {
 
             this._shape.graphics.rect(x - w , y - h, w * 2, h * 2);
             this._shape.graphics.endStroke();
+        };
+
+        this.createShapeCloud = function(x, y, scale_x, scale_y) {
+            this._shape = new createjs.Shape();
+            this._shape.name = 'cloud';
+            this._stage.addChild(this._shape);
+            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            this._shape.graphics.beginStroke(BLACK);
+            this._shape.graphics.beginFill(WHITE);
+
+            var w = this._width / scale_x;
+            var h = this._height / scale_y;
+
+            var steps = 36;
+
+            this._shape.graphics.moveTo(x + w, y);
+
+            var state = 0;
+
+            for (var i = 0; i < steps; i++) {
+                var alpha = 2.0 * i * (Math.PI / steps);
+                var sinalpha = Math.sin(alpha);
+                var cosalpha = Math.cos(alpha);
+
+                if (state == 0) {
+                    var x1 = x + (1.0 * w * cosalpha);
+                    var y1 = y + (1.0 * h * sinalpha);
+                } else if (state == 1) {
+                    var x2 = x + (1.0 * w * cosalpha);
+                    var y2 = y + (1.0 * h * sinalpha);
+                } else if (state == 2) {
+                    var x3 = x + (0.8 * w * cosalpha);
+                    var y3 = y + (0.8 * h * sinalpha);
+                };
+
+                if (state == 2) {
+                    this._shape.graphics.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+                };
+
+                state += 1;
+                if (state == 3) {
+                    state = 0;
+                };
+            };
+
+            x1 = x + (1.0 * w * cosalpha);
+            y1 = y + (1.0 * h * sinalpha);
+            x2 = x + (1.0 * w);
+            y2 = y;
+            x3 = x + (1.0 * self.ancho);
+            y3 = y;
+            this._shape.graphics.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+
+            this._shape.graphics.closePath();
+            this._shape.graphics.endStroke();
+            this._shape.setTransform(0, 0, scale_x, scale_y);
+
         };
 
         this.createControls = function() {
