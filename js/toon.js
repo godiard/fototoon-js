@@ -16,6 +16,10 @@ define(function (require) {
     var DIR_UP = "arriba";
     var DIR_LEFT = "izq";
     var DIR_RIGHT = "der";
+
+    var MODE_NORMAL = 'normal';
+    var MODE_WHISPER = 'despacio';
+
     var SIZE_RESIZE_AREA = 40; // TODO style.GRID_CELL_SIZE / 2
 
     var TYPE_GLOBE = 'GLOBE';
@@ -225,6 +229,7 @@ define(function (require) {
                 this._radio = 100;
                 this._direction = DIR_DOWN;
                 this._text = new Text(this, null);
+                this._mode = MODE_NORMAL;
             } else {
                 /* example of the json data stored
 
@@ -247,6 +252,11 @@ define(function (require) {
                                    globeData['point_1']];
                 } else {
                     this._point = [0, 0];
+                };
+                if (this._type == TYPE_GLOBE) {
+                    this._mode = globeData['mode'];
+                } else {
+                    this._mode = MODE_NORMAL;
                 };
                 this._radio = globeData['radio'];
                 this._direction = globeData['direction'];
@@ -326,7 +336,9 @@ define(function (require) {
             this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
             this._shape.graphics.beginStroke(BLACK);
             this._shape.graphics.beginFill(WHITE);
-
+            if (this._mode == MODE_WHISPER) {
+                this._shape.graphics.setStrokeDash([3]);
+            };
             this._shape.graphics.arc(x, y, this._radio,
                                      begin / (180.0) * Math.PI,
                                      end / (180.0) * Math.PI)
