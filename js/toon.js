@@ -201,8 +201,7 @@ define(function (require) {
             this._textView.x = this._globe._x;
             this._textView.y = this._globe._y -
                 this._textView.getMeasuredHeight() / 2;
-            this._globe._stage.addChildAt(this._textView, 2);
-            this._globe._stage.update();
+            this._globe._stage.addChild(this._textView);
         };
 
         this.init();
@@ -225,7 +224,7 @@ define(function (require) {
                                this._height / 2];
                 this._radio = 100;
                 this._direction = DIR_DOWN;
-                this._text = Text(this, null);
+                this._text = new Text(this, null);
             } else {
                 /* example of the json data stored
 
@@ -251,7 +250,7 @@ define(function (require) {
                 };
                 this._radio = globeData['radio'];
                 this._direction = globeData['direction'];
-                this._text = Text(this, globeData);
+                this._text = new Text(this, globeData);
             };
 
             this._shape = null;
@@ -294,8 +293,6 @@ define(function (require) {
                 this.createShapeRectangle();
             };
 
-            this._stage.update();
-
             this._shape.on('click', function(event) {
                 if (this._selected) {
                     this._selected = false;
@@ -324,6 +321,7 @@ define(function (require) {
 
         this.createShapeGlobe = function(x, y, begin, end, scale_x, scale_y) {
             this._shape = new createjs.Shape();
+            this._shape.name = 'globe';
             this._stage.addChild(this._shape);
             this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
             this._shape.graphics.beginStroke(BLACK);
@@ -347,6 +345,7 @@ define(function (require) {
             var h = this._height;
 
             this._shape = new createjs.Shape();
+            this._shape.name = 'rect';
             this._stage.addChild(this._shape);
             this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
             this._shape.graphics.beginStroke(BLACK);
@@ -369,6 +368,8 @@ define(function (require) {
             var h = this._height;
 
             this._shapeControls = new createjs.Shape();
+            this._shapeControls.name = 'control_rect';
+
             // draw dotted rectangle around the globe
             this._shapeControls.graphics.setStrokeStyle(1, "round");
             this._shapeControls.graphics.beginStroke(WHITE);
@@ -417,7 +418,7 @@ define(function (require) {
                     button.y = globe._y - globe._height - button.height / 2;
                     button.visible = globe._selected;
                     globe._controls.push(button);
-                    globe._stage.addChildAt(button, 3);
+                    globe._stage.addChild(button);
                     globe._stage.update();
 
                     button.on('pressmove', function(event) {
@@ -436,7 +437,7 @@ define(function (require) {
                     button.y = globe._y + globe._height - button.height / 2;
                     button.visible = globe._selected;
                     globe._controls.push(button);
-                    globe._stage.addChildAt(button, 3);
+                    globe._stage.addChild(button);
                     globe._stage.update();
 
                     button.on('click', function(event) {
@@ -468,8 +469,8 @@ define(function (require) {
 
         this.update = function() {
             this.createShape();
-            this.createControls();
             this._text.update();
+            this.createControls();
             this._stage.update();
         }
 
