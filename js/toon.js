@@ -159,12 +159,18 @@ define(function (require) {
         };
 
         this.CairoToHtmlFontFormat = function(cairoFormat) {
-            // get a str with format "Sans 10"
+            // get a str with format "Sans 10" or "Sans bold 10"
             // return a str with format "10px Sans"
             parts = cairoFormat.split(' ');
             family = parts[0];
-            size = parts[1];
-            return size + "px " + family;
+            if (parts.length == 2) {
+                size = parts[1];
+                style = '';
+            } else {
+                style = parts[1] + ' ';
+                size = parts[2];
+            };
+            return  style + size + 'px ' + family;
         };
 
         this.update = function() {
