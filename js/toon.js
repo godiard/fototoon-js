@@ -160,7 +160,7 @@ define(function (require) {
 
         this.CairoToHtmlFontFormat = function(cairoFormat) {
             // get a str with format "Sans 10" or "Sans bold 10"
-            // return a str with format "10px Sans"
+            // return a str with format "10px Sans" or "bold 10px Sans"
             parts = cairoFormat.split(' ');
             family = parts[0];
             if (parts.length == 2) {
@@ -171,6 +171,22 @@ define(function (require) {
                 size = parts[2];
             };
             return  style + size + 'px ' + family;
+        };
+
+        this.HtmlToCairoFontFormat = function(cairoFormat) {
+            // get a str with format "10px Sans" or "bold 10px Sans"
+            // return a str with format "Sans 10" or "Sans bold 10"
+            parts = cairoFormat.split(' ');
+            if (parts.length == 2) {
+                size = parts[0].replace('px', '');
+                family = parts[1];
+                return family + ' ' + size;
+            } else {
+                style = parts[0];
+                size = parts[1].replace('px', '');
+                family = parts[2];
+                return family + ' ' + style + ' ' + size;
+            };
         };
 
         this.update = function() {
