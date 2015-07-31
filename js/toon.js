@@ -134,6 +134,7 @@ define(function (require) {
             rh = (color[0] / 65535 * 255).toString(16);
             gh = (color[1] / 65535 * 255).toString(16);
             bh = (color[2] / 65535 * 255).toString(16);
+            // Number.toString() can return a single char.
             if (rh.length < 2) { rh = '0' + rh};
             if (gh.length < 2) { gh = '0' + gh};
             if (bh.length < 2) { bh = '0' + bh};
@@ -147,8 +148,8 @@ define(function (require) {
             gh = rgb.substr(3, 2);
             bh = rgb.substr(5, 2);
             r = parseInt(rh, 16) / 255 * 65535;
-            g = parseInt(rg, 16) / 255 * 65535;
-            b = parseInt(rb, 16) / 255 * 65535;
+            g = parseInt(gh, 16) / 255 * 65535;
+            b = parseInt(bh, 16) / 255 * 65535;
             return [r, g, b];
         };
 
