@@ -52,7 +52,7 @@ define(function (require) {
                         'globe_type': 'EXCLAMATION',
                         'text_text': 'Hey!',
                         'height': 36.66666666666667, 'width': 76.66666666666667,
-                        'text_color': (60909, 9509, 10537), 'radio': 30,
+                        'text_color': [60909, 9509, 10537], 'radio': 30,
                         'text_width': 46, 'y': 72.0, 'x': 96.0, 'text_height': 22,
                         'title_globe': false, 'point_0': 40.5, 'point_1': 54},
                         {'direction': 'abajo',
