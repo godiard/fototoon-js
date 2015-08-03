@@ -7,7 +7,7 @@ define(function (require) {
     var smallScreen = (window.innerWidth < 700) || (window.innerHeight < 600);
     var font = smallScreen ? "16px Arial" : "24px Arial";
 
-    var LINE_WIDTH = 2;
+    var LINE_WIDTH = 3;
     var BLACK = "#000000";
     var WHITE = "#ffffff";
 
