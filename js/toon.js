@@ -279,35 +279,17 @@ define(function (require) {
             var scale_x = this._width /this._radio;
             var scale_y = this._height /this._radio;
 
-            var x = this._x / scale_x;
-            var y = this._y / scale_y;
-
-            switch (this._direction) {
-                case DIR_DOWN:
-                    var begin = 100;
-                    var end = 80;
-                    break;
-                case DIR_RIGHT:
-                    var begin = 10;
-                    var end = 350;
-                    break;
-                case DIR_LEFT:
-                    var begin = 190;
-                    var end = 170;
-                    break;
-                case DIR_UP:
-                    var begin = 280;
-                    var end = 260;
-            };
+            var scaled_x = this._x / scale_x;
+            var scaled_y = this._y / scale_y;
 
             if (this._type == TYPE_CLOUD) {
-                this.createShapeCloud(x, y, scale_x, scale_y);
+                this.createShapeCloud(scaled_x, scaled_y, scale_x, scale_y);
             } else if (this._type == TYPE_EXCLAMATION) {
-                this.createShapeExclamation(x, y, scale_x, scale_y);
+                this.createShapeExclamation(scaled_x, scaled_y, scale_x, scale_y);
             } else if (this._type == TYPE_RECTANGLE) {
                 this.createShapeRectangle();
             } else {
-                this.createShapeGlobe(x, y, begin, end, scale_x, scale_y);
+                this.createShapeGlobe(scaled_x, scaled_y, scale_x, scale_y);
             };
 
             this._shape.on('click', function(event) {
@@ -336,7 +318,25 @@ define(function (require) {
 
         };
 
-        this.createShapeGlobe = function(x, y, begin, end, scale_x, scale_y) {
+        this.createShapeGlobe = function(x, y, scale_x, scale_y) {
+            switch (this._direction) {
+                case DIR_DOWN:
+                    var begin = 100;
+                    var end = 80;
+                    break;
+                case DIR_RIGHT:
+                    var begin = 10;
+                    var end = 350;
+                    break;
+                case DIR_LEFT:
+                    var begin = 190;
+                    var end = 170;
+                    break;
+                case DIR_UP:
+                    var begin = 280;
+                    var end = 260;
+            };
+
             this._shape = new createjs.Shape();
             this._shape.name = 'globe';
             this._stage.addChild(this._shape);
@@ -436,8 +436,7 @@ define(function (require) {
             this._shapeCircles = new createjs.Shape();
             this._shapeCircles.name = 'cloud circles';
             this._stage.addChild(this._shapeCircles);
-            this._shapeCircles.graphics.setStrokeStyle(LINE_WIDTH, "round",
-                                                       null, null, true);
+            this._shapeCircles.graphics.setStrokeStyle(LINE_WIDTH, "round");
             this._shapeCircles.graphics.beginStroke(BLACK);
             this._shapeCircles.graphics.beginFill(WHITE);
 
