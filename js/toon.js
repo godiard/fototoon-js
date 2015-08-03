@@ -340,7 +340,8 @@ define(function (require) {
             this._shape = new createjs.Shape();
             this._shape.name = 'globe';
             this._stage.addChild(this._shape);
-            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round",
+                                                null, null, true);
             this._shape.graphics.beginStroke(BLACK);
             this._shape.graphics.beginFill(WHITE);
             if (this._mode == MODE_WHISPER) {
@@ -366,7 +367,8 @@ define(function (require) {
             this._shape = new createjs.Shape();
             this._shape.name = 'rect';
             this._stage.addChild(this._shape);
-            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round",
+                                                null, null, true);
             this._shape.graphics.beginStroke(BLACK);
             this._shape.graphics.beginFill(WHITE);
 
@@ -378,7 +380,8 @@ define(function (require) {
             this._shape = new createjs.Shape();
             this._shape.name = 'cloud';
             this._stage.addChild(this._shape);
-            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round",
+                                                null, null, true);
             this._shape.graphics.beginStroke(BLACK);
             this._shape.graphics.beginFill(WHITE);
 
@@ -433,7 +436,8 @@ define(function (require) {
             this._shapeCircles = new createjs.Shape();
             this._shapeCircles.name = 'cloud circles';
             this._stage.addChild(this._shapeCircles);
-            this._shapeCircles.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            this._shapeCircles.graphics.setStrokeStyle(LINE_WIDTH, "round",
+                                                       null, null, true);
             this._shapeCircles.graphics.beginStroke(BLACK);
             this._shapeCircles.graphics.beginFill(WHITE);
 
@@ -481,7 +485,8 @@ define(function (require) {
             this._shape = new createjs.Shape();
             this._shape.name = 'exclamation';
             this._stage.addChild(this._shape);
-            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round",
+                                                null, null, true);
             this._shape.graphics.beginStroke(BLACK);
             this._shape.graphics.beginFill(WHITE);
 
