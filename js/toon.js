@@ -271,6 +271,9 @@ define(function (require) {
         this.createShape = function() {
             if (this._shape != null) {
                 this._stage.removeChild(this._shape);
+                if (this._type == TYPE_CLOUD) {
+                    this._stage.removeChild(this._shapeCircles);
+                };
             };
 
             var scale_x = this._width /this._radio;
@@ -422,8 +425,54 @@ define(function (require) {
 
             this._shape.graphics.closePath();
             this._shape.graphics.endStroke();
+
+            firstCirclePos = this.getCloudPointPosition();
+
+            this._shapeCircles = new createjs.Shape();
+            this._shapeCircles.name = 'cloud circles';
+            this._stage.addChild(this._shapeCircles);
+            this._shapeCircles.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            this._shapeCircles.graphics.beginStroke(BLACK);
+            this._shapeCircles.graphics.beginFill(WHITE);
+
+            this._shapeCircles.graphics.arc(
+                firstCirclePos[0], firstCirclePos[1], 7,
+                0, 2 * Math.PI);
+            this._shapeCircles.graphics.endStroke();
+
+            secondCirclePos = this.getPointPosition(false);
+
+            this._shapeCircles.graphics.beginStroke(BLACK);
+            this._shapeCircles.graphics.beginFill(WHITE);
+            this._shapeCircles.graphics.arc(
+                secondCirclePos[0], secondCirclePos[1], 5,
+                0, 2 * Math.PI);
+            this._shapeCircles.graphics.endStroke();
+
             this._shape.setTransform(0, 0, scale_x, scale_y);
 
+        };
+
+        this.getCloudPointPosition = function() {
+            var x = this._x;
+            var y = this._y;
+            var w = this._width;
+            var h = this._height;
+
+            switch (this._direction) {
+                case DIR_DOWN:
+                    return [x + this._point[0] / 2,
+                        y + h + this._point[1] / 2];
+                case DIR_RIGHT:
+                    return [x + w + this._point[0] / 2,
+                        y + this._point[1] / 2];
+                case DIR_LEFT:
+                    return [x - w - this._point[0] / 2,
+                        y + this._point[1] / 2];
+                case DIR_UP:
+                    return [x + this._point[0] / 2,
+                        y - h - this._point[1] / 2];
+            };
         };
 
         this.createControls = function() {
