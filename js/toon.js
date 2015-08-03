@@ -386,9 +386,6 @@ define(function (require) {
             var h = this._height / scale_y;
 
             var steps = 36;
-
-            this._shape.graphics.moveTo(x + w, y);
-
             var state = 0;
 
             for (var i = 0; i < steps; i++) {
@@ -397,16 +394,15 @@ define(function (require) {
                 var cosalpha = Math.cos(alpha);
 
                 if (state == 0) {
-                    var x1 = x + (1.0 * w * cosalpha);
-                    var y1 = y + (1.0 * h * sinalpha);
+                    var x1 = x + w * cosalpha;
+                    var y1 = y + h * sinalpha;
                 } else if (state == 1) {
-                    var x2 = x + (1.0 * w * cosalpha);
-                    var y2 = y + (1.0 * h * sinalpha);
+                    var x2 = x + w * cosalpha;
+                    var y2 = y + h * sinalpha;
                 } else if (state == 2) {
-                    var x3 = x + (0.8 * w * cosalpha);
-                    var y3 = y + (0.8 * h * sinalpha);
+                    var x3 = x + 0.8 * w * cosalpha;
+                    var y3 = y + 0.8 * h * sinalpha;
                 };
-
                 if (state == 2) {
                     this._shape.graphics.bezierCurveTo(x1, y1, x2, y2, x3, y3);
                 };
@@ -415,13 +411,17 @@ define(function (require) {
                 if (state == 3) {
                     state = 0;
                 };
+
+                if (i == 0) {
+                    this._shape.graphics.moveTo(x1, y1);
+                };
             };
 
-            x1 = x + (1.0 * w * cosalpha);
-            y1 = y + (1.0 * h * sinalpha);
-            x2 = x + (1.0 * w);
+            x1 = x + w * cosalpha;
+            y1 = y + h * sinalpha;
+            x2 = x + w;
             y2 = y;
-            x3 = x + (1.0 * self.ancho);
+            x3 = x + w;
             y3 = y;
             this._shape.graphics.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 
