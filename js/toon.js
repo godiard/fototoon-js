@@ -302,6 +302,8 @@ define(function (require) {
 
             if (this._type == TYPE_CLOUD) {
                 this.createShapeCloud(x, y, scale_x, scale_y);
+            } else if (this._type == TYPE_EXCLAMATION) {
+                this.createShapeExclamation(x, y, scale_x, scale_y);
             } else if (this._type == TYPE_RECTANGLE) {
                 this.createShapeRectangle();
             } else {
@@ -473,6 +475,56 @@ define(function (require) {
                     return [x + this._point[0] / 2,
                         y - h - this._point[1] / 2];
             };
+        };
+
+        this.createShapeExclamation = function(x, y, scale_x, scale_y) {
+            this._shape = new createjs.Shape();
+            this._shape.name = 'exclamation';
+            this._stage.addChild(this._shape);
+            this._shape.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            this._shape.graphics.beginStroke(BLACK);
+            this._shape.graphics.beginFill(WHITE);
+
+            var w = this._width / scale_x;
+            var h = this._height / scale_y;
+
+            var steps = 24;
+
+            for (var i = 0; i < steps; i++) {
+                var alpha = 2.0 * i * (Math.PI / steps);
+                var sinalpha = Math.sin(alpha);
+                var cosalpha = Math.cos(alpha);
+
+                if (i % 2 > 0) {
+                    xi = x + 0.8 * w * cosalpha;
+                    yi = y + 0.8 * h * sinalpha;
+                } else {
+                    xi = x + w * cosalpha;
+                    yi = y + h * sinalpha;
+                };
+
+                if ((this._direction == DIR_DOWN && i == 6) ||
+                   (this._direction == DIR_RIGHT && i == 0) ||
+                   (this._direction == DIR_LEFT && i == 12) ||
+                   (this._direction == DIR_UP && i == 18)) {
+
+                    pos = this.getPointPosition(true);
+                    xi = pos[0];
+                    yi = pos[1];
+                };
+
+                if (i == 0) {
+                    this._shape.graphics.moveTo(xi, yi);
+                } else {
+                    this._shape.graphics.lineTo(xi, yi);
+                };
+            }
+
+            this._shape.graphics.closePath();
+            this._shape.graphics.endStroke();
+
+            this._shape.setTransform(0, 0, scale_x, scale_y);
+
         };
 
         this.createControls = function() {
