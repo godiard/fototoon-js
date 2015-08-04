@@ -44,7 +44,7 @@ define(function (require) {
                 "text_text": "T\u00edtulo:"}], "img_h": 0},
 
                 // this is the first box
-                {"img_w": 589, "img_y": 0, "image_name": "image1.png",
+                {"img_w": 589, "img_y": 0, "image_name": "image3.png",
                  "img_x": 0, "img_h": 441, "slideshow_duration": 10,
                     "globes": [
                         {'direction': 'abajo',

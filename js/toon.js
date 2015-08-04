@@ -29,6 +29,22 @@ define(function (require) {
 
     toon = {};
 
+    function createAsyncBitmap(box, url, callback) {
+        // Async creation of bitmap from SVG data
+        // Works with Chrome, Safari, Firefox (untested on IE)
+        var img = new Image();
+        img.onload = function () {
+            bitmap = new createjs.Bitmap(img);
+            bitmap.setBounds(0, 0, img.width, img.height);
+            bitmap.mouseEnabled = false;
+            callback(box, bitmap);
+        };
+        img.onerror = function (errorMsg, url, lineNumber) {
+            callback(box, null);
+        };
+        img.src = url;
+    };
+
     function createAsyncBitmapButton(globe, url, callback) {
         // creates a square black button with a image inside
         // is used for the corner controls in the globe
@@ -83,17 +99,34 @@ define(function (require) {
                                 this._width, this._height);
             this.stage.addChild(background);
             if (this._data != null) {
-                globes = this._data['globes'];
-                for (var n = 0; n < globes.length; n++) {
-                    var globe = new Globe(this, globes[n]);
-                    this.globes.push(globe);
-                }
+                if (this._data['image_name'] != '') {
+                    createAsyncBitmap(this,
+                        './data/' + this._data['image_name'],
+                        function(box, bitmap) {
+                            if (bitmap != null) {
+                                bitmap.x = 0;
+                                bitmap.y = 0;
+                                box.stage.addChild(bitmap);
+                            };
+                            box.createGlobes();
+                        });
+                } else {
+                    this.createGlobes();
+                };
             };
             this.stage.update();
         };
 
         this.addGlobe = function () {
             globe = new Globe(this);
+        };
+
+        this.createGlobes = function() {
+            var globes = this._data['globes'];
+            for (var n = 0; n < globes.length; n++) {
+                var globe = new Globe(this, globes[n]);
+                this.globes.push(globe);
+            };
         };
 
         /*
