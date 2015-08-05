@@ -1,3 +1,59 @@
+// FOR TESTING
+// stolen from http://stackoverflow.com/questions/1068834/object-comparison-in-javascript
+
+Object.equals = function(x, y) {
+  if (x === y) {
+    console.log('if both x and y are null or undefined and exactly the same');
+    return true;
+  };
+
+  if (! (x instanceof Object) || !(y instanceof Object)) {
+    console.log('if they are not strictly equal, they both need to be Objects');
+    return false;
+  };
+
+  if (x.constructor !== y.constructor) {
+    console.log('they must have the exact same prototype chain, the closest we can do is');
+    // test there constructor
+    return false;
+  };
+
+  for (var p in x) {
+    if (! x.hasOwnProperty(p))
+      continue;
+      // other properties were tested using x.constructor === y.constructor
+
+    if (!y.hasOwnProperty(p)){
+      console.log('allows to compare x[ p ] and y[ p ] when set to undefined (' + p + ')');
+      return false;
+    }
+
+    if (x[p] === y[p])
+      // if they have the same strict value or identity then they are equal
+      continue;
+
+    if (typeof(x[p]) !== "object") {
+        console.log('Numbers, Strings, Functions, Booleans must be strictly equal');
+        return false;
+    };
+
+    if (!Object.equals(x[p], y[p])) {
+      // Objects and Arrays must be tested recursively
+      return false;
+    };
+  }
+
+  for (p in y) {
+    if (y.hasOwnProperty(p) && ! x.hasOwnProperty(p)) {
+        console.log('allows x[ p ] to be set to undefined (' + p + ')');
+        return false;
+    };
+  };
+  return true;
+};
+
+var DEBUG = true;
+
 define(function (require) {
 
     require("easel");
@@ -100,17 +156,30 @@ define(function (require) {
             this.stage.addChild(background);
             if (this._data != null) {
                 if (this._data['image_name'] != '') {
+                    this._image_x = this._data['img_x'];
+                    this._image_y = this._data['img_y'];
+                    this._image_width = this._data['img_w'];
+                    this._image_height = this._data['img_h'];
+                    this._image_name = this._data['image_name'];
+                    this._slideshow_duration = this._data['slideshow_duration'];
+
                     createAsyncBitmap(this,
                         './data/' + this._data['image_name'],
                         function(box, bitmap) {
                             if (bitmap != null) {
-                                bitmap.x = 0;
-                                bitmap.y = 0;
+                                bitmap.x = box._image_x;
+                                bitmap.y = box._image_y;
                                 box.stage.addChild(bitmap);
                             };
                             box.createGlobes();
                         });
                 } else {
+                    this._image_x = 0;
+                    this._image_y = 0;
+                    this._image_width = canvas.width;
+                    this._image_height = canvas.height;
+                    this._image_name = '';
+                    this._slideshow_duration = 10;
                     this.createGlobes();
                 };
             };
@@ -121,11 +190,65 @@ define(function (require) {
             globe = new Globe(this);
         };
 
+        this.getJson = function() {
+            jsonData = {};
+            jsonData['img_x'] = this._image_x;
+            jsonData['img_y'] = this._image_y;
+            jsonData['img_w'] = this._image_width;
+            jsonData['img_h'] = this._image_height;
+            jsonData['image_name'] = this._image_name;
+            jsonData['slideshow_duration'] = this._slideshow_duration;
+
+            jsonData['globes'] = [];
+            for (var n = 0; n < this.globes.length; n++) {
+                globe = this.globes[n];
+                globeData = {};
+
+                globeData['globe_type'] = globe._type;
+                globeData['x'] = globe._x;
+                globeData['y'] = globe._y;
+                globeData['width'] = globe._width;
+                globeData['height'] = globe._height;
+
+                if (globe._type != TYPE_RECTANGLE) {
+                    globeData['point_0'] = globe._point[0];
+                    globeData['point_1'] = globe._point[1];
+                };
+                if (globe._type == TYPE_GLOBE) {
+                    globeData['mode'] = globe._mode;
+                };
+                globeData['radio'] = globe._radio;
+                globeData['direction'] = globe._direction;
+                globeData['title_globe'] = globe._title_globe;
+                // text properties
+                globeData['text_text'] = globe._text._text;
+                globeData['text_font_description'] =
+                     globe._text.HtmlToCairoFontFormat(
+                    globe._text._font_description);
+                globeData['text_color'] =
+                     globe._text.HtmlToGdkColor(
+                    globe._text._color);
+                globeData['text_width'] = globe._text._width;
+                globeData['text_height'] = globe._text._height;
+                jsonData['globes'].push(globeData);
+            };
+
+            if (DEBUG) {
+                console.log(jsonData);
+            }
+            return jsonData;
+        };
+
         this.createGlobes = function() {
             var globes = this._data['globes'];
             for (var n = 0; n < globes.length; n++) {
                 var globe = new Globe(this, globes[n]);
                 this.globes.push(globe);
+            };
+
+            if (DEBUG) {
+                console.log('ORIGINAL DATA EQUALS TO OBJECTS ' +
+                            Object.equals(this._data, this.getJson()));
             };
         };
 
@@ -263,6 +386,8 @@ define(function (require) {
                 this._direction = DIR_DOWN;
                 this._text = new Text(this, null);
                 this._mode = MODE_NORMAL;
+                // title_globe can't be deleted
+                this._title_globe = false;
             } else {
                 /* example of the json data stored
 
@@ -294,6 +419,7 @@ define(function (require) {
                 this._radio = globeData['radio'];
                 this._direction = globeData['direction'];
                 this._text = new Text(this, globeData);
+                this._title_globe = globeData['title_globe'];
             };
 
             this._shape = null;

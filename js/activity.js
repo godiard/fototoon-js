@@ -108,7 +108,6 @@ define(function (require) {
         mainCanvas.style.left = ((window.innerWidth - mainCanvas.width) / 2) + "px";
 
         comic_box_data = test_data['boxs'][1];
-        console.log(comic_box_data);
         this.comicBox = new toon.ComicBox(mainCanvas, comic_box_data);
         this.comicBox.init();
 
