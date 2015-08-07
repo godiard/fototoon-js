@@ -2,6 +2,18 @@
   background-image: url(../activity/fototoon.svg);
 }
 
+#previous-button {
+  background-image: url(../icons/go-previous-paired.svg);
+}
+
+#next-button {
+  background-image: url(../icons/go-next-paired.svg);
+}
+
+#add-button {
+  background-image: url(../icons/list-add.svg);
+}
+
 #canvas p {
   margin-top: 25%;
   text-align: center;
