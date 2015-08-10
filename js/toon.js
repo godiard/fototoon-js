@@ -134,6 +134,38 @@ define(function (require) {
         return img;
     };
 
+    function Model(data, canvas) {
+
+        this._data = data;
+        this._canvas = canvas;
+
+        this.init = function() {
+            this.activeBox = 1;
+            comic_box_data = this._data['boxs'][this.activeBox];
+            this.comicBox = new ComicBox(this._canvas, comic_box_data);
+            this.comicBox.init();
+        };
+
+        this.changeBox = function(newOrder) {
+            if (newOrder > 0 && newOrder < this._data['boxs'].length) {
+                // store the changes
+                this._data['boxs'][this.activeBox] = this.comicBox.getJson();
+                // load the new data
+                this.activeBox = newOrder;
+                this.comicBox.setData(this._data['boxs'][this.activeBox]);
+            };
+        };
+
+        this.showPreviousBox = function() {
+            this.changeBox(this.activeBox - 1);
+        };
+
+        this.showNextBox = function() {
+            this.changeBox(this.activeBox + 1);
+        };
+
+    };
+
     function ComicBox(canvas, data) {
 
         this.canvas = canvas;
@@ -184,6 +216,13 @@ define(function (require) {
                 };
             };
             this.stage.update();
+        };
+
+        this.setData = function(data) {
+            this._data = data;
+            this.globes = [];
+            this.stage.removeAllChildren();
+            this.init();
         };
 
         this.addGlobe = function () {
@@ -863,6 +902,7 @@ define(function (require) {
     };
 
     toon.ComicBox = ComicBox;
+    toon.Model = Model;
 
     return toon;
 });

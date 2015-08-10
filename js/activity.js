@@ -107,9 +107,19 @@ define(function (require) {
         mainCanvas.width = mainCanvas.height * 4 / 3;
         mainCanvas.style.left = ((window.innerWidth - mainCanvas.width) / 2) + "px";
 
-        comic_box_data = test_data['boxs'][1];
-        this.comicBox = new toon.ComicBox(mainCanvas, comic_box_data);
-        this.comicBox.init();
+        var toonModel = new toon.Model(test_data, mainCanvas);
+        toonModel.init();
+
+        var previousButton = document.getElementById("previous-button");
+        previousButton.addEventListener('click', function (e) {
+            toonModel.showPreviousBox();
+        });
+
+        var nextButton = document.getElementById("next-button");
+        nextButton.addEventListener('click', function (e) {
+            toonModel.showNextBox();
+        });
+
 
     });
 
