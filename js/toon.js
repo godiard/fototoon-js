@@ -805,20 +805,21 @@ define(function (require) {
 
                 });
 
-            createAsyncBitmapButton(this, './icons/object_rotate_right.svg',
-                function(globe, button) {
-                    button.x = globe._x + globe._width - button.width / 2;
-                    button.y = globe._y + globe._height - button.height / 2;
-                    button.visible = globe._selected;
-                    globe._controls.push(button);
-                    globe._stage.addChild(button);
-                    globe._stage.update();
+            if (this._type != TYPE_RECTANGLE) {
+                createAsyncBitmapButton(this, './icons/object_rotate_right.svg',
+                    function(globe, button) {
+                        button.x = globe._x + globe._width - button.width / 2;
+                        button.y = globe._y + globe._height - button.height / 2;
+                        button.visible = globe._selected;
+                        globe._controls.push(button);
+                        globe._stage.addChild(button);
+                        globe._stage.update();
 
-                    button.on('click', function(event) {
-                        globe.rotate();
+                        button.on('click', function(event) {
+                            globe.rotate();
+                        });
                     });
-
-                });
+            };
         };
 
         this.rotate = function () {
