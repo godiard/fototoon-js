@@ -286,8 +286,9 @@ define(function (require) {
             };
 
             if (DEBUG) {
-                console.log('ORIGINAL DATA EQUALS TO OBJECTS ' +
-                            Object.equals(this._data, this.getJson()));
+                if (! Object.equals(this._data, this.getJson())) {
+                    console.log('ERROR: ORIGINAL DATA DIFFERENT TO OBJECTS!!');
+                };
             };
         };
 
