@@ -260,15 +260,15 @@ define(function (require) {
                 globeData['direction'] = globe._direction;
                 globeData['title_globe'] = globe._title_globe;
                 // text properties
-                globeData['text_text'] = globe._text._text;
+                globeData['text_text'] = globe._textViewer.getText();
                 globeData['text_font_description'] =
-                     globe._text.HtmlToCairoFontFormat(
-                    globe._text._font_description);
+                     globe._textViewer.HtmlToCairoFontFormat(
+                    globe._textViewer._font_description);
                 globeData['text_color'] =
-                     globe._text.HtmlToGdkColor(
-                    globe._text._color);
-                globeData['text_width'] = globe._text._width;
-                globeData['text_height'] = globe._text._height;
+                     globe._textViewer.HtmlToGdkColor(
+                    globe._textViewer._color);
+                globeData['text_width'] = globe._textViewer._width;
+                globeData['text_height'] = globe._textViewer._height;
                 jsonData['globes'].push(globeData);
             };
 
@@ -298,7 +298,7 @@ define(function (require) {
         */
     };
 
-    function Text(globe, globeData) {
+    function TextViewer(globe, globeData) {
 
         this._globe = globe;
         this._globeData = globeData;
@@ -403,6 +403,15 @@ define(function (require) {
             this._globe._stage.addChild(this._textView);
         };
 
+        this.getText = function() {
+            return this._text;
+        };
+
+        this.setText = function(text) {
+            this._text = text;
+            this.update();
+        };
+
         this.init();
         return this;
     };
@@ -423,7 +432,7 @@ define(function (require) {
                                this._height / 2];
                 this._radio = 100;
                 this._direction = DIR_DOWN;
-                this._text = new Text(this, null);
+                this._textViewer = new TextViewer(this, null);
                 this._mode = MODE_NORMAL;
                 // title_globe can't be deleted
                 this._title_globe = false;
@@ -457,7 +466,7 @@ define(function (require) {
                 };
                 this._radio = globeData['radio'];
                 this._direction = globeData['direction'];
-                this._text = new Text(this, globeData);
+                this._textViewer = new TextViewer(this, globeData);
                 this._title_globe = globeData['title_globe'];
             };
 
@@ -815,7 +824,7 @@ define(function (require) {
                     globe._stage.update();
 
                     button.on('click', function(event) {
-
+                        console.log(globe._textViewer.getText());
                     });
                 });
 
@@ -859,7 +868,7 @@ define(function (require) {
 
         this.update = function() {
             this.createShape();
-            this._text.update();
+            this._textViewer.update();
             this.createControls();
             this._stage.update();
         }
