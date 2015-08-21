@@ -178,6 +178,7 @@ define(function (require) {
         createjs.Touch.enable(this.stage);
 
         this.globes = [];
+        this._globeSelected = null;
 
         this.init = function () {
             var background = new createjs.Shape();
@@ -223,6 +224,20 @@ define(function (require) {
             this.globes = [];
             this.stage.removeAllChildren();
             this.init();
+        };
+
+        this.isGlobeSelected = function(globe) {
+            return this._globeSelected == globe;
+        };
+
+        this.selectGlobe = function(globe) {
+            this._globeSelected = globe;
+            this.globes.forEach(
+                function (element, index, array) {
+                    if (element != globe) {
+                        element.setSelected(false);
+                    };
+            });
         };
 
         this.addGlobe = function () {
@@ -473,7 +488,6 @@ define(function (require) {
 
             this._shape = null;
             this._controls = [];
-            this._selected = false;
         };
 
         this.createShape = function() {
@@ -501,29 +515,36 @@ define(function (require) {
             };
 
             this._shape.on('click', function(event) {
-                if (this._selected) {
-                    this._selected = false;
-                    this._controls.forEach(
-                        function (element, index, array) {
-                            element.visible = false;
-                    });
-                } else {
-                    this._selected = true;
-                    this._controls.forEach(
-                        function (element, index, array) {
-                            element.visible = true;
-                    });
-                };
-                this._stage.update();
+                this.setSelected(true);
             }, this);
 
             this._shape.on("pressmove",function(event) {
                 this._x = event.stageX;
                 this._y = event.stageY;
-                this._selected = true;
+                this.setSelected(true);
                 this.update();
             }, this);
 
+        };
+
+        this.getSelected = function() {
+            return this._box.isGlobeSelected(this);
+        };
+
+        this.setSelected = function(selected) {
+            if (selected) {
+                this._box.selectGlobe(this);
+                this._controls.forEach(
+                    function (element, index, array) {
+                        element.visible = true;
+                });
+            } else {
+                this._controls.forEach(
+                    function (element, index, array) {
+                        element.visible = false;
+                });
+            };
+            this._stage.update();
         };
 
         this.createShapeGlobe = function(x, y, scale_x, scale_y) {
@@ -764,7 +785,7 @@ define(function (require) {
             this._shapeControls.graphics.rect(x - w , y - h, w * 2, h * 2);
             this._shapeControls.graphics.endStroke();
 
-            this._shapeControls.visible = this._selected;
+            this._shapeControls.visible = this.getSelected();
             this._stage.addChild(this._shapeControls);
             this._controls.push(this._shapeControls);
 
@@ -784,14 +805,14 @@ define(function (require) {
                     0, 2 * Math.PI);
                 this._pointerControl.hitArea = hitArea;
 
-                this._pointerControl.visible = this._selected;
+                this._pointerControl.visible = this.getSelected();
 
                 this._stage.addChild(this._pointerControl);
                 this._controls.push(this._pointerControl);
 
                 this._pointerControl.on("pressmove",function(event) {
                     this.setPointPosition(event.stageX, event.stageY);
-                    this._selected = true;
+                    this._box.selectGlobe(this);
                     this.update();
                 }, this);
             };
@@ -800,7 +821,7 @@ define(function (require) {
                 function(globe, button) {
                     button.x = globe._x - globe._width - button.width / 2;
                     button.y = globe._y - globe._height - button.height / 2;
-                    button.visible = globe._selected;
+                    button.visible = globe.getSelected();
                     globe._controls.push(button);
                     globe._stage.addChild(button);
                     globe._stage.update();
@@ -819,7 +840,7 @@ define(function (require) {
                 function(globe, button) {
                     button.x = globe._x + globe._width - button.width / 2;
                     button.y = globe._y - globe._height - button.height / 2;
-                    button.visible = globe._selected;
+                    button.visible = globe.getSelected();
                     globe._controls.push(button);
                     globe._stage.addChild(button);
                     globe._stage.update();
@@ -835,7 +856,7 @@ define(function (require) {
                     function(globe, button) {
                         button.x = globe._x + globe._width - button.width / 2;
                         button.y = globe._y + globe._height - button.height / 2;
-                        button.visible = globe._selected;
+                        button.visible = globe.getSelected();
                         globe._controls.push(button);
                         globe._stage.addChild(button);
                         globe._stage.update();
