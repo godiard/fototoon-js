@@ -14,6 +14,10 @@
   background-image: url(../icons/list-add.svg);
 }
 
+#text-button {
+  background-image: url(../icons/format-text-size.svg);
+}
+
 #canvas p {
   margin-top: 25%;
   text-align: center;

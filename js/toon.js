@@ -134,16 +134,19 @@ define(function (require) {
         return img;
     };
 
-    function Model(data, canvas) {
+    function Model(data, canvas, textpalette) {
 
         this._data = data;
         this._canvas = canvas;
+        this._textpalette = textpalette;
+        this.comicBox = null;
 
         this.init = function() {
             this.activeBox = 1;
             comic_box_data = this._data['boxs'][this.activeBox];
             this.comicBox = new ComicBox(this._canvas, comic_box_data);
             this.comicBox.init();
+            this.comicBox.attachTextEditionPalette(this._textpalette);
         };
 
         this.changeBox = function(newOrder) {
@@ -179,6 +182,9 @@ define(function (require) {
 
         this.globes = [];
         this._globeSelected = null;
+
+        // reference to the text palette used to edit the text in the globes
+        this._textpalette = null;
 
         this.init = function () {
             var background = new createjs.Shape();
@@ -226,16 +232,35 @@ define(function (require) {
             this.init();
         };
 
+        this.attachTextEditionPalette = function(textpalette) {
+            this._textpalette = textpalette;
+            var box = this;
+            this._textpalette.editorElem.onblur = function () {
+                if (box.getSelectedGlobe() != null) {
+                    box.getSelectedGlobe().setText(this.value);
+                };
+            };
+        };
+
+        this.getSelectedGlobe = function() {
+            return this._globeSelected;
+        };
+
         this.isGlobeSelected = function(globe) {
             return this._globeSelected == globe;
         };
 
         this.selectGlobe = function(globe) {
             this._globeSelected = globe;
+            var textpalette = this._textpalette;
             this.globes.forEach(
                 function (element, index, array) {
                     if (element != globe) {
                         element.setSelected(false);
+                    } else {
+                        if (textpalette != null) {
+                            textpalette.setText(element.getText());
+                        };
                     };
             });
         };
@@ -417,6 +442,7 @@ define(function (require) {
             this._textView.y = this._globe._y -
                 this._textView.getMeasuredHeight() / 2;
             this._globe._stage.addChild(this._textView);
+            this._globe._stage.update();
         };
 
         this.getText = function() {
@@ -545,6 +571,14 @@ define(function (require) {
                 });
             };
             this._stage.update();
+        };
+
+        this.getText = function() {
+            return this._textViewer.getText();
+        };
+
+        this.setText = function(text) {
+            this._textViewer.setText(text);
         };
 
         this.createShapeGlobe = function(x, y, scale_x, scale_y) {

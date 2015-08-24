@@ -1,7 +1,7 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
     var datastore = require("sugar-web/datastore");
-
+    var textpalette = require("textpalette");
 
     // initialize canvas size
     var onAndroid = /Android/i.test(navigator.userAgent);
@@ -107,9 +107,6 @@ define(function (require) {
         mainCanvas.width = mainCanvas.height * 4 / 3;
         mainCanvas.style.left = ((window.innerWidth - mainCanvas.width) / 2) + "px";
 
-        var toonModel = new toon.Model(test_data, mainCanvas);
-        toonModel.init();
-
         var previousButton = document.getElementById("previous-button");
         previousButton.addEventListener('click', function (e) {
             toonModel.showPreviousBox();
@@ -120,6 +117,11 @@ define(function (require) {
             toonModel.showNextBox();
         });
 
+        var textButton = document.getElementById("text-button");
+        var tp = new textpalette.TextPalette(textButton, toonModel);
+
+        var toonModel = new toon.Model(test_data, mainCanvas, tp);
+        toonModel.init();
 
     });
 
