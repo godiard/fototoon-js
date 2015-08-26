@@ -139,9 +139,17 @@ define(function (require) {
         var menuData = [{'icon': true, 'id': 'globe', 'label': 'Add a globe'},
                         {'icon': true, 'id': 'exclamation', 'label': 'Add a exclamation'},
                         {'icon': true, 'id': 'whisper', 'label': 'Add a whisper'},
+                        {'icon': true, 'id': 'think', 'label': 'Add a thinking'},
                         {'icon': true, 'id': 'textbox', 'label': 'Add a text box'},];
         var mp = new menupalette.MenuPalette(addGlobeButton,
             "Add globes", menuData);
+
+        for (var i = 0; i < mp.buttons.length; i++) {
+            mp.buttons[i].addEventListener('click', function(e) {
+                toonModel.addGlobe(this.id);
+            });
+        };
+
 
     });
 

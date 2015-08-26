@@ -43,6 +43,10 @@ button#textbox.icon {
   background-image: url(../icons/box.svg);
 }
 
+button#think.icon {
+  background-image: url(../icons/think.svg);
+}
+
 #canvas p {
   margin-top: 25%;
   text-align: center;

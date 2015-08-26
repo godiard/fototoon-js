@@ -159,6 +159,10 @@ define(function (require) {
             };
         };
 
+        this.addGlobe = function(globeType) {
+            this.comicBox.addGlobe(globeType);
+        };
+
         this.showPreviousBox = function() {
             this.changeBox(this.activeBox - 1);
         };
@@ -273,8 +277,35 @@ define(function (require) {
             });
         };
 
-        this.addGlobe = function () {
-            globe = new Globe(this);
+        this.addGlobe = function (globeType) {
+            var width = 100;
+            var height = 50;
+            globeData = {'x': 100, 'y': 100,
+                         'width': width, 'height': height,
+                         'point_0': width / 2, 'point_1': height / 2,
+                         'radio': 100, 'direction': DIR_DOWN,
+                         'mode': MODE_NORMAL};
+
+            if (globeType == 'globe') {
+                globeData['globe_type'] = TYPE_GLOBE;
+            };
+            if (globeType == 'whisper') {
+                globeData['globe_type'] = TYPE_GLOBE;
+                globeData['mode'] = MODE_WHISPER;
+            };
+            if (globeType == 'exclamation') {
+                globeData['globe_type'] = TYPE_EXCLAMATION;
+            };
+            if (globeType == 'think') {
+                globeData['globe_type'] = TYPE_CLOUD;
+            };
+            if (globeType == 'textbox') {
+                globeData['globe_type'] = TYPE_RECTANGLE;
+            };
+
+            var globe = new Globe(this, globeData);
+            this.globes.push(globe);
+            this.init();
         };
 
         this.getJson = function() {
@@ -354,13 +385,12 @@ define(function (require) {
 
         this.init = function() {
 
-            if (this._globeData == null) {
-                this._text = '';
-                this._font_description = 'Sans 10';
-                this._color = BLACK;
-                this._width = globe._width - 20;
-                this._height = SIZE_RESIZE_AREA / 2;
-            } else {
+            this._text = '';
+            this._font_description = 'Sans 10';
+            this._color = BLACK;
+            this._width = globe._width - 20;
+            this._height = SIZE_RESIZE_AREA / 2;
+            if (this._globeData != null) {
                 /* example of the text data in the json globe data stored
                 {"text_font_description": "Sans 10",
                  "text_text": "Hmm, esto parece estar funcionando",
@@ -370,13 +400,23 @@ define(function (require) {
                 NOTE: color components are in the range 0-65535
                 https://developer.gnome.org/pygtk/stable/class-gdkcolor.html#constructor-gdkcolor
                 */
-                this._text = this._globeData['text_text'];
-                this._font_description = this.CairoToHtmlFontFormat(
-                    this._globeData['text_font_description']);
-                this._color = this.GdkToHtmlColor(this._globeData['text_color']);
-                this._width = this._globeData['text_width'];
-                this._height = this._globeData['text_height'];
-
+                if (this._globeData['text_text'] != undefined) {
+                    this._text = this._globeData['text_text'];
+                };
+                if (this._globeData['text_font_description'] != undefined) {
+                    this._font_description = this.CairoToHtmlFontFormat(
+                        this._globeData['text_font_description']);
+                };
+                if (this._globeData['text_color'] != undefined) {
+                    this._color = this.GdkToHtmlColor(
+                        this._globeData['text_color']);
+                };
+                if (this._globeData['text_width'] != undefined) {
+                    this._width = this._globeData['text_width'];
+                };
+                if (this._globeData['text_height'] != undefined) {
+                    this._height = this._globeData['text_height'];
+                };
                 this._textView = null;
             };
         };
