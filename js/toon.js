@@ -244,6 +244,12 @@ define(function (require) {
             }, false);;
         };
 
+        this.popupTextEditionPalette = function() {
+            if (this._textpalette != null) {
+                this._textpalette.popUp();
+            };
+        };
+
         this.getSelectedGlobe = function() {
             return this._globeSelected;
         };
@@ -882,7 +888,7 @@ define(function (require) {
                     globe._stage.update();
 
                     button.on('click', function(event) {
-                        console.log(globe._textViewer.getText());
+                        globe._box.popupTextEditionPalette();
                     });
                 });
 
