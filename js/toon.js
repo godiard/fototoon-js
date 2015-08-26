@@ -235,11 +235,13 @@ define(function (require) {
         this.attachTextEditionPalette = function(textpalette) {
             this._textpalette = textpalette;
             var box = this;
-            this._textpalette.editorElem.onblur = function () {
+            // NOTE: this not work on IE see here for more info:
+            // http://stackoverflow.com/questions/2823733/textarea-onchange-detection
+            this._textpalette.editorElem.addEventListener('input', function() {
                 if (box.getSelectedGlobe() != null) {
                     box.getSelectedGlobe().setText(this.value);
                 };
-            };
+            }, false);;
         };
 
         this.getSelectedGlobe = function() {
