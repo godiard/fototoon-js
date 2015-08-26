@@ -2,6 +2,7 @@ define(function (require) {
     var activity = require("sugar-web/activity/activity");
     var datastore = require("sugar-web/datastore");
     var textpalette = require("textpalette");
+    var menupalette = require("sugar-web/graphics/menupalette");
 
     // initialize canvas size
     var onAndroid = /Android/i.test(navigator.userAgent);
@@ -28,7 +29,6 @@ define(function (require) {
 
     // Manipulate the DOM only when it is ready.
     require(['domReady!'], function (doc) {
-
 
         // Initialize the activity.
         activity.setup();
@@ -134,6 +134,14 @@ define(function (require) {
 
         var toonModel = new toon.Model(initialData, mainCanvas, tp);
         toonModel.init();
+
+        var addGlobeButton = document.getElementById("add-globe");
+        var menuData = [{'icon': true, 'id': 'globe', 'label': 'Add a globe'},
+                        {'icon': true, 'id': 'exclamation', 'label': 'Add a exclamation'},
+                        {'icon': true, 'id': 'whisper', 'label': 'Add a whisper'},
+                        {'icon': true, 'id': 'textbox', 'label': 'Add a text box'},];
+        var mp = new menupalette.MenuPalette(addGlobeButton,
+            "Add globes", menuData);
 
     });
 

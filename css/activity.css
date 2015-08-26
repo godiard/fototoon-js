@@ -14,8 +14,33 @@
   background-image: url(../icons/list-add.svg);
 }
 
+#add-globe {
+  background-image: url(../icons/globe.svg);
+}
+
 #text-button {
   background-image: url(../icons/format-text-size.svg);
+}
+
+button.icon {
+  background-repeat: no-repeat;
+  background-size: 33px;
+}
+
+button#globe.icon {
+  background-image: url(../icons/globe.svg);
+}
+
+button#exclamation.icon {
+  background-image: url(../icons/exclamation.svg);
+}
+
+button#whisper.icon {
+  background-image: url(../icons/whisper.svg);
+}
+
+button#textbox.icon {
+  background-image: url(../icons/box.svg);
 }
 
 #canvas p {
