@@ -83,6 +83,9 @@ define(function (require) {
     var TYPE_EXCLAMATION = 'EXCLAMATION';
     var TYPE_RECTANGLE = 'RECTANGLE';
 
+    // TYPE_WHISPER is saved as TYPE_GLOBE and mode MODE_WHISPER
+    var TYPE_WHISPER = 'WHISPER';
+
     toon = {};
 
     function createAsyncBitmap(box, url, callback) {
@@ -280,27 +283,15 @@ define(function (require) {
         this.addGlobe = function (globeType) {
             var width = 100;
             var height = 50;
-            globeData = {'x': 100, 'y': 100,
+            globeData = {'globe_type': globeType, 'x': 100, 'y': 100,
                          'width': width, 'height': height,
                          'point_0': width / 2, 'point_1': height / 2,
                          'radio': 100, 'direction': DIR_DOWN,
                          'mode': MODE_NORMAL};
 
-            if (globeType == 'globe') {
-                globeData['globe_type'] = TYPE_GLOBE;
-            };
-            if (globeType == 'whisper') {
+            if (globeType == TYPE_WHISPER) {
                 globeData['globe_type'] = TYPE_GLOBE;
                 globeData['mode'] = MODE_WHISPER;
-            };
-            if (globeType == 'exclamation') {
-                globeData['globe_type'] = TYPE_EXCLAMATION;
-            };
-            if (globeType == 'think') {
-                globeData['globe_type'] = TYPE_CLOUD;
-            };
-            if (globeType == 'textbox') {
-                globeData['globe_type'] = TYPE_RECTANGLE;
             };
 
             var globe = new Globe(this, globeData);
@@ -1032,6 +1023,12 @@ define(function (require) {
 
     toon.ComicBox = ComicBox;
     toon.Model = Model;
+
+    toon.TYPE_GLOBE = TYPE_GLOBE;
+    toon.TYPE_CLOUD = TYPE_CLOUD;
+    toon.TYPE_EXCLAMATION = TYPE_EXCLAMATION;
+    toon.TYPE_RECTANGLE = TYPE_RECTANGLE;
+    toon.TYPE_WHISPER = TYPE_WHISPER;
 
     return toon;
 });

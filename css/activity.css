@@ -22,28 +22,29 @@
   background-image: url(../icons/format-text-size.svg);
 }
 
+/* these are the icons in the globes menu */
 button.icon {
   background-repeat: no-repeat;
   background-size: 33px;
 }
 
-button#globe.icon {
+button#GLOBE.icon {
   background-image: url(../icons/globe.svg);
 }
 
-button#exclamation.icon {
+button#EXCLAMATION.icon {
   background-image: url(../icons/exclamation.svg);
 }
 
-button#whisper.icon {
+button#WHISPER.icon {
   background-image: url(../icons/whisper.svg);
 }
 
-button#textbox.icon {
+button#RECTANGLE.icon {
   background-image: url(../icons/box.svg);
 }
 
-button#think.icon {
+button#CLOUD.icon {
   background-image: url(../icons/think.svg);
 }
 

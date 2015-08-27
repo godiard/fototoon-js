@@ -136,11 +136,16 @@ define(function (require) {
         toonModel.init();
 
         var addGlobeButton = document.getElementById("add-globe");
-        var menuData = [{'icon': true, 'id': 'globe', 'label': 'Add a globe'},
-                        {'icon': true, 'id': 'exclamation', 'label': 'Add a exclamation'},
-                        {'icon': true, 'id': 'whisper', 'label': 'Add a whisper'},
-                        {'icon': true, 'id': 'think', 'label': 'Add a thinking'},
-                        {'icon': true, 'id': 'textbox', 'label': 'Add a text box'},];
+        var menuData = [{'icon': true, 'id': toon.TYPE_GLOBE,
+                         'label': 'Add a globe'},
+                        {'icon': true, 'id': toon.TYPE_EXCLAMATION,
+                         'label': 'Add a exclamation'},
+                        {'icon': true, 'id': toon.TYPE_WHISPER,
+                         'label': 'Add a whisper'},
+                        {'icon': true, 'id': toon.TYPE_CLOUD,
+                         'label': 'Add a thinking'},
+                        {'icon': true, 'id': toon.TYPE_RECTANGLE,
+                         'label': 'Add a text box'},];
         var mp = new menupalette.MenuPalette(addGlobeButton,
             "Add globes", menuData);
 
