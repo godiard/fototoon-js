@@ -19,6 +19,16 @@ define(["sugar-web/graphics/palette"], function (palette) {
             '<textarea rows="8" id="editor" class="expand"></textarea>' +
             '</div>';
 
+
+        var styleToolbar = '<div class="toolbar" id="text-style-toolbar">' +
+            '<button class="toolbutton" id="text-inc-size"></button>' +
+            '<button class="toolbutton" id="text-dec-size"></button>' +
+            '<button class="toolbutton" id="text-set-bold"></button>' +
+            '<button class="toolbutton" id="text-set-italic"></button>'+
+            '</div>';
+
+        content = content + styleToolbar;
+
         var colors = ['#000000', '#ff0000', '#00008b', '#006400', '#8b008b',
                       '#c0c0c0', '#ffd700', '#008000', '#ff4500', '#8b4513' ];
 

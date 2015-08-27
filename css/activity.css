@@ -22,6 +22,26 @@
   background-image: url(../icons/format-text-size.svg);
 }
 
+#text-style-toolbar {
+  padding: 0px 25px;
+}
+
+#text-inc-size {
+  background-image: url(../icons/resize+.svg);
+}
+
+#text-dec-size {
+  background-image: url(../icons/resize-.svg);
+}
+
+#text-set-bold {
+  background-image: url(../icons/format-text-bold.svg);
+}
+
+#text-set-italic {
+  background-image: url(../icons/format-text-italic.svg);
+}
+
 .color-picker {
   width: 44px;
   height: 44px;
