@@ -248,14 +248,14 @@ define(function (require) {
             // http://stackoverflow.com/questions/2823733/textarea-onchange-detection
             this._textpalette.editorElem.addEventListener('input', function() {
                 if (box.getSelectedGlobe() != null) {
-                    box.getSelectedGlobe().setText(this.value);
+                    box.getSelectedGlobe().getTextViewer().setText(this.value);
                 };
             }, false);;
 
             var colorButtons = this._textpalette.colorButtons;
             for (var i = 0; i < colorButtons.length; i++) {
                 colorButtons[i].addEventListener('click', function(e) {
-                    box.getSelectedGlobe().setColor(this.value);
+                    box.getSelectedGlobe().getTextViewer().setColor(this.value);
                 });
             };
 
@@ -284,7 +284,8 @@ define(function (require) {
                         element.setSelected(false);
                     } else {
                         if (textpalette != null) {
-                            textpalette.setText(element.getText());
+                            textpalette.setText(
+                                element.getTextViewer().getText());
                         };
                     };
             });
@@ -641,16 +642,8 @@ define(function (require) {
             this._stage.update();
         };
 
-        this.getText = function() {
-            return this._textViewer.getText();
-        };
-
-        this.setText = function(text) {
-            this._textViewer.setText(text);
-        };
-
-        this.setColor = function(color) {
-            this._textViewer.setColor(color);
+        this.getTextViewer = function() {
+            return this._textViewer;
         };
 
         this.createShapeGlobe = function(x, y, scale_x, scale_y) {
