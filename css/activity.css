@@ -22,6 +22,20 @@
   background-image: url(../icons/format-text-size.svg);
 }
 
+.color-picker {
+  width: 44px;
+  height: 44px;
+  width: 44px;
+  margin: 2px;
+  border-radius: 22px;
+  border-color: white;
+}
+
+#text-palette textarea {
+  height: 75px;
+  resize: none;
+}
+
 /* these are the icons in the globes menu */
 button.icon {
   background-repeat: no-repeat;

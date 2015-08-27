@@ -249,6 +249,14 @@ define(function (require) {
                     box.getSelectedGlobe().setText(this.value);
                 };
             }, false);;
+
+            var colorButtons = this._textpalette.colorButtons;
+            for (var i = 0; i < colorButtons.length; i++) {
+                colorButtons[i].addEventListener('click', function(e) {
+                    box.getSelectedGlobe().setColor(this.value);
+                });
+            };
+
         };
 
         this.popupTextEditionPalette = function() {
@@ -493,6 +501,11 @@ define(function (require) {
             this.update();
         };
 
+        this.setColor = function(color) {
+            this._color = color;
+            this.update();
+        };
+
         this.init();
         return this;
     };
@@ -618,6 +631,10 @@ define(function (require) {
 
         this.setText = function(text) {
             this._textViewer.setText(text);
+        };
+
+        this.setColor = function(color) {
+            this._textViewer.setColor(color);
         };
 
         this.createShapeGlobe = function(x, y, scale_x, scale_y) {
