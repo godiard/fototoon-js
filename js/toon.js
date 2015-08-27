@@ -86,6 +86,8 @@ define(function (require) {
     // TYPE_WHISPER is saved as TYPE_GLOBE and mode MODE_WHISPER
     var TYPE_WHISPER = 'WHISPER';
 
+    var DEFAULT_FONT_SIZE = 14;
+
     toon = {};
 
     function createAsyncBitmap(box, url, callback) {
@@ -340,8 +342,7 @@ define(function (require) {
                 // text properties
                 globeData['text_text'] = globe._textViewer.getText();
                 globeData['text_font_description'] =
-                     globe._textViewer.HtmlToCairoFontFormat(
-                    globe._textViewer._font_description);
+                     globe._textViewer.getCairoFontFormat();
                 globeData['text_color'] =
                      globe._textViewer.HtmlToGdkColor(
                     globe._textViewer._color);
@@ -385,10 +386,12 @@ define(function (require) {
         this.init = function() {
 
             this._text = '';
-            this._font_description = 'Sans 10';
             this._color = BLACK;
             this._width = globe._width - 20;
             this._height = SIZE_RESIZE_AREA / 2;
+            this._size = DEFAULT_FONT_SIZE;
+            this._bold = false;
+            this._italic = false;
             if (this._globeData != null) {
                 /* example of the text data in the json globe data stored
                 {"text_font_description": "Sans 10",
@@ -403,7 +406,7 @@ define(function (require) {
                     this._text = this._globeData['text_text'];
                 };
                 if (this._globeData['text_font_description'] != undefined) {
-                    this._font_description = this.CairoToHtmlFontFormat(
+                    this.ReadHtmlFontFormat(
                         this._globeData['text_font_description']);
                 };
                 if (this._globeData['text_color'] != undefined) {
@@ -445,11 +448,11 @@ define(function (require) {
             return [r, g, b];
         };
 
-        this.CairoToHtmlFontFormat = function(cairoFormat) {
+        this.ReadHtmlFontFormat = function(cairoFormat) {
             // get a str with format "Sans 10" or "Sans bold 10"
             // return a str with format "10px Sans" or "bold 10px Sans"
-            parts = cairoFormat.split(' ');
-            family = parts[0];
+            var parts = cairoFormat.split(' ');
+            var family = parts[0];
             if (parts.length == 2) {
                 size = parts[1];
                 style = '';
@@ -457,23 +460,36 @@ define(function (require) {
                 style = parts[1] + ' ';
                 size = parts[2];
             };
-            return  style + size + 'px ' + family;
+            this._size = Number(size);
+            this._family = family;
+            this._bold = style.toLowerCase().indexOf('bold') > -1;
+            this._italic = style.toLowerCase().indexOf('italic') > -1;
         };
 
-        this.HtmlToCairoFontFormat = function(cairoFormat) {
-            // get a str with format "10px Sans" or "bold 10px Sans"
+        this.getCairoFontFormat = function() {
             // return a str with format "Sans 10" or "Sans bold 10"
-            parts = cairoFormat.split(' ');
-            if (parts.length == 2) {
-                size = parts[0].replace('px', '');
-                family = parts[1];
-                return family + ' ' + size;
-            } else {
-                style = parts[0];
-                size = parts[1].replace('px', '');
-                family = parts[2];
-                return family + ' ' + style + ' ' + size;
+            var cairoFormat = this._family;
+            if (this._bold) {
+                cairoFormat = cairoFormat + ' ' + 'bold';
             };
+            if (this._italic) {
+                cairoFormat = cairoFormat + ' ' + 'italic';
+            };
+            return cairoFormat + ' ' + this._size;
+
+        };
+
+        this.getFontDescription = function() {
+            // return a str with format "10px Sans" or "bold 10px Sans"
+            var cairoFormat = '';
+            if (this._bold) {
+                cairoFormat = cairoFormat + ' ' + 'bold';
+            };
+            if (this._italic) {
+                cairoFormat = cairoFormat + ' ' + 'italic';
+            };
+            return cairoFormat + ' ' + this._size + 'px ' + this._family;
+
         };
 
         this.update = function() {
@@ -481,7 +497,7 @@ define(function (require) {
                 this._globe._stage.removeChild(this._textView);
             };
             this._textView = new createjs.Text(this._text,
-                                               this._font_description,
+                                               this.getFontDescription(),
                                                this._color);
             this._textView.textAlign = 'center';
             this._textView.lineWidth = this._globe._width * 2;
