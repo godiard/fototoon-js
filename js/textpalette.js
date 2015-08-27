@@ -51,6 +51,11 @@ define(["sugar-web/graphics/palette"], function (palette) {
 
         this.colorButtons = document.querySelectorAll(".color-picker");
 
+        this.incTextBtn = containerElem.querySelector('#text-inc-size');
+        this.decTextBtn = containerElem.querySelector('#text-dec-size');
+        this.boldTextBtn = containerElem.querySelector('#text-set-bold');
+        this.italicTextBtn = containerElem.querySelector('#text-set-italic');
+
     };
 
     var setText = function (text) {

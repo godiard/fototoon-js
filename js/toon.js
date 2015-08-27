@@ -259,6 +259,22 @@ define(function (require) {
                 });
             };
 
+            this._textpalette.incTextBtn.addEventListener('click', function(e) {
+                box.getSelectedGlobe().getTextViewer().incSize();
+            });
+
+            this._textpalette.decTextBtn.addEventListener('click', function(e) {
+                box.getSelectedGlobe().getTextViewer().decSize();
+            });
+
+            this._textpalette.boldTextBtn.addEventListener('click', function(e) {
+                box.getSelectedGlobe().getTextViewer().toggleBold();
+            });
+
+            this._textpalette.italicTextBtn.addEventListener('click', function(e) {
+                box.getSelectedGlobe().getTextViewer().toggleItalic();
+            });
+
         };
 
         this.popupTextEditionPalette = function() {
@@ -520,6 +536,30 @@ define(function (require) {
 
         this.setColor = function(color) {
             this._color = color;
+            this.update();
+        };
+
+        this.incSize = function() {
+            if (this._size < 60) {
+                this._size = this._size + Math.round(this._size / 4);
+                this.update();
+            };
+        };
+
+        this.decSize = function() {
+            if (this._size > 10) {
+                this._size = this._size - Math.round(this._size / 4);
+                this.update();
+            };
+        };
+
+        this.toggleBold = function() {
+            this._bold = ! this._bold;
+            this.update();
+        };
+
+        this.toggleItalic = function() {
+            this._italic = ! this._italic;
             this.update();
         };
 
