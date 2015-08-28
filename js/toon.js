@@ -252,27 +252,42 @@ define(function (require) {
                 };
             }, false);;
 
+            var editor = this._textpalette.editorElem;
+
             var colorButtons = this._textpalette.colorButtons;
             for (var i = 0; i < colorButtons.length; i++) {
                 colorButtons[i].addEventListener('click', function(e) {
-                    box.getSelectedGlobe().getTextViewer().setColor(this.value);
+                    editor.style.color =
+                        box.getSelectedGlobe().getTextViewer().setColor(this.value);
                 });
             };
 
             this._textpalette.incTextBtn.addEventListener('click', function(e) {
-                box.getSelectedGlobe().getTextViewer().incSize();
+                editor.style.fontSize =
+                    box.getSelectedGlobe().getTextViewer().incSize() + "px";
             });
 
             this._textpalette.decTextBtn.addEventListener('click', function(e) {
-                box.getSelectedGlobe().getTextViewer().decSize();
+                editor.style.fontSize =
+                    box.getSelectedGlobe().getTextViewer().decSize() + "px";
             });
 
             this._textpalette.boldTextBtn.addEventListener('click', function(e) {
-                box.getSelectedGlobe().getTextViewer().toggleBold();
+                var bold = box.getSelectedGlobe().getTextViewer().toggleBold();
+                if (bold) {
+                    editor.style.fontWeight = 'bold';
+                } else {
+                    editor.style.fontWeight = 'normal';
+                };
             });
 
             this._textpalette.italicTextBtn.addEventListener('click', function(e) {
-                box.getSelectedGlobe().getTextViewer().toggleItalic();
+                var italic = box.getSelectedGlobe().getTextViewer().toggleItalic();
+                if (italic) {
+                    editor.style.fontStyle = 'italic';
+                } else {
+                    editor.style.fontStyle = 'normal';
+                };
             });
 
         };
@@ -537,6 +552,7 @@ define(function (require) {
         this.setColor = function(color) {
             this._color = color;
             this.update();
+            return this._color;
         };
 
         this.incSize = function() {
@@ -544,6 +560,7 @@ define(function (require) {
                 this._size = this._size + Math.round(this._size / 4);
                 this.update();
             };
+            return this._size;
         };
 
         this.decSize = function() {
@@ -551,16 +568,19 @@ define(function (require) {
                 this._size = this._size - Math.round(this._size / 4);
                 this.update();
             };
+            return this._size;
         };
 
         this.toggleBold = function() {
             this._bold = ! this._bold;
             this.update();
+            return this._bold;
         };
 
         this.toggleItalic = function() {
             this._italic = ! this._italic;
             this.update();
+            return this._italic;
         };
 
         this.init();
