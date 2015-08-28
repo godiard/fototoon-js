@@ -155,6 +155,33 @@ define(function (require) {
             });
         };
 
+        // load files
+        var imageChooser = document.getElementById('image-loader');
+
+        var addButton = document.getElementById("add-button");
+        addButton.addEventListener('click', function (e) {
+            imageChooser.focus();
+            imageChooser.click();
+        });
+
+        imageChooser.addEventListener('click', function (event) {
+            this.value = null;
+        });
+
+        imageChooser.addEventListener('change', function (event) {
+            // Read file here.
+            var reader = new FileReader();
+            reader.onloadend = (function () {
+                 toonModel.addImage(reader.result);
+            });
+
+            var file = imageChooser.files[0];
+            if (file) {
+                reader.readAsDataURL(file);
+            };
+
+        }, false);
+
 
     });
 
