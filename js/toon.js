@@ -317,6 +317,8 @@ define(function (require) {
                         if (textpalette != null) {
                             textpalette.setText(
                                 element.getTextViewer().getText());
+                            element.getTextViewer().applyTextProperties(
+                                textpalette.editorElem);
                         };
                     };
             });
@@ -581,6 +583,23 @@ define(function (require) {
             this._italic = ! this._italic;
             this.update();
             return this._italic;
+        };
+
+        this.applyTextProperties = function(editor) {
+            // apply the viewer text properties to the editor
+            // (used when a globe is selected)
+            editor.style.fontSize = this._size + 'px';
+            editor.style.color = this._color;
+            if (this._italic) {
+                editor.style.fontStyle = 'italic';
+            } else {
+                editor.style.fontStyle = 'normal';
+            };
+            if (this._bold) {
+                editor.style.fontWeight = 'bold';
+            } else {
+                editor.style.fontWeight = 'normal';
+            };
         };
 
         this.init();
