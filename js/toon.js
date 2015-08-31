@@ -147,7 +147,7 @@ define(function (require) {
         this.comicBox = null;
 
         this.init = function() {
-            this.activeBox = 1;
+            this.activeBox = 0;
             comic_box_data = this._data['boxs'][this.activeBox];
             this.comicBox = new ComicBox(this._canvas, comic_box_data);
             this.comicBox.init();
@@ -155,8 +155,7 @@ define(function (require) {
         };
 
         this.changeBox = function(newOrder) {
-            if (newOrder > 0 && newOrder < this._data['boxs'].length) {
-                // store the changes
+            if (newOrder >= 0 && newOrder < this._data['boxs'].length) {
                 this._data['boxs'][this.activeBox] = this.comicBox.getJson();
                 // load the new data
                 this.activeBox = newOrder;
@@ -169,11 +168,20 @@ define(function (require) {
         };
 
         this.showPreviousBox = function() {
-            this.changeBox(this.activeBox - 1);
+            var prevBox = this.activeBox - 1;
+            this.changeBox(prevBox);
         };
 
         this.showNextBox = function() {
-            this.changeBox(this.activeBox + 1);
+            var nextBox = this.activeBox + 1;
+            this.changeBox(nextBox);
+        };
+
+        this.addImage = function(url) {
+            var emptyData = {'globes':[]};
+            this._data['boxs'].push(emptyData);
+            this.changeBox(this._data['boxs'].length - 1);
+            this.comicBox.setBackgroundImageName(url);
         };
 
     };
@@ -203,7 +211,8 @@ define(function (require) {
                                 this._width, this._height);
             this.stage.addChild(background);
             if (this._data != null) {
-                if (this._data['image_name'] != '') {
+                if (this._data['image_name'] != '' &&
+                    this._data['image_name'] != undefined) {
                     this._image_x = this._data['img_x'];
                     this._image_y = this._data['img_y'];
                     this._image_width = this._data['img_w'];
@@ -211,16 +220,20 @@ define(function (require) {
                     this._image_name = this._data['image_name'];
                     this._slideshow_duration = this._data['slideshow_duration'];
 
-                    createAsyncBitmap(this,
-                        './data/' + this._data['image_name'],
-                        function(box, bitmap) {
-                            if (bitmap != null) {
-                                bitmap.x = box._image_x;
-                                bitmap.y = box._image_y;
-                                box.stage.addChild(bitmap);
-                            };
-                            box.createGlobes();
-                        });
+                    if (this._image_name.indexOf('data:') == 0) {
+                        this.setBackgroundImageName(this._data['image_name']);
+                    } else {
+                        createAsyncBitmap(this,
+                            './data/' + this._image_name,
+                            function(box, bitmap) {
+                                if (bitmap != null) {
+                                    bitmap.x = box._image_x;
+                                    bitmap.y = box._image_y;
+                                    box.stage.addChildAt(bitmap, 0);
+                                };
+                                box.createGlobes();
+                            });
+                    };
                 } else {
                     this._image_x = 0;
                     this._image_y = 0;
@@ -232,6 +245,22 @@ define(function (require) {
                 };
             };
             this.stage.update();
+        };
+
+        this.setBackgroundImageName = function(imageUrl) {
+            // load the url in the data, for persistence
+            //this._data['image_name'] = imageUrl;
+            // this is the property used to draw later
+            this._image_name = imageUrl;
+            var img = new Image();
+            img.src = imageUrl;
+            bitmap = new createjs.Bitmap(img);
+            bitmap.setBounds(0, 0, img.width, img.height);
+            bitmap.mouseEnabled = false;
+            bitmap.x = 0;
+            bitmap.y = 0;
+            this.stage.addChildAt(bitmap, 0);
+            this.createGlobes();
         };
 
         this.setData = function(data) {
@@ -397,6 +426,7 @@ define(function (require) {
                 var globe = new Globe(this, globes[n]);
                 this.globes.push(globe);
             };
+            this.stage.update();
 
             if (DEBUG) {
                 if (! Object.equals(this._data, this.getJson())) {
@@ -405,11 +435,6 @@ define(function (require) {
             };
         };
 
-        /*
-        this.stage.on("click", function (event) {
-            console.log('stage click' + event.target);
-        }, this);
-        */
     };
 
     function TextViewer(globe, globeData) {
