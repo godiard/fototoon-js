@@ -11,6 +11,7 @@ requirejs.config({
         preload: "../lib/preloadjs-0.4.1.min",
         toon: "../js/toon",
         textpalette: "../js/textpalette",
+        jszip: "../lib/jszip.min",
     }
 });
 

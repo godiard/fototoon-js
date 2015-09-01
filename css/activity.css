@@ -2,6 +2,10 @@
   background-image: url(../activity/fototoon.svg);
 }
 
+#doc-open {
+  background-image: url(../icons/document-open.svg);
+}
+
 #previous-button {
   background-image: url(../icons/go-previous-paired.svg);
 }

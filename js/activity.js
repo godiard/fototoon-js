@@ -155,7 +155,7 @@ define(function (require) {
             });
         };
 
-        // load files
+        // load images
         var imageChooser = document.getElementById('image-loader');
 
         var addButton = document.getElementById("add-button");
@@ -181,6 +181,52 @@ define(function (require) {
             };
 
         }, false);
+
+        // load fototoon files
+        var JSZip = require("jszip");
+        var toonChooser = document.getElementById('fototoon-loader');
+
+        var openButton = document.getElementById("doc-open");
+        openButton.addEventListener('click', function (e) {
+            toonChooser.focus();
+            toonChooser.click();
+        });
+
+        toonChooser.addEventListener('click', function (event) {
+            this.value = null;
+        });
+
+        toonChooser.addEventListener('change', function (event) {
+            // Read file here.
+            var reader = new FileReader();
+            reader.onload = (function(theFile) {
+                return function(e) {
+                    console.log('e ' + e);
+                    try {
+                        // read the content of the file with JSZip
+                        var zip = new JSZip(e.target.result);
+                        $.each(zip.files, function (index, zipEntry) {
+                            console.log('reading ' + zipEntry.name);
+                            // the content is here : zipEntry.asText()
+                            if (zipEntry.name == 'data.json') {
+                                data = JSON.parse(zipEntry.asText());
+                                toonModel = new toon.Model(data, mainCanvas, tp);
+                                toonModel.init();
+                            };
+                        });
+
+                    } catch(e) {
+                        console.log('Exception ' + theFile.name + " : " + e.message);
+                    };
+                };
+            })(file);
+            var file = toonChooser.files[0];
+            if (file) {
+                reader.readAsArrayBuffer(file);
+            };
+
+        }, false);
+
 
 
     });
