@@ -252,13 +252,24 @@ define(function (require) {
             //this._data['image_name'] = imageUrl;
             // this is the property used to draw later
             this._image_name = imageUrl;
+            this._image_x = 0;
+            this._image_y = 0;
+            this._image_width = this._width;
+            this._image_height = this._height;
             var img = new Image();
             img.src = imageUrl;
             bitmap = new createjs.Bitmap(img);
             bitmap.setBounds(0, 0, img.width, img.height);
+            // calculate scale
+            var scale_x = this._width / img.width;
+            var scale_y = this._height / img.height;
+            var scale = Math.min(scale_x, scale_y);
+
             bitmap.mouseEnabled = false;
-            bitmap.x = 0;
-            bitmap.y = 0;
+            bitmap.x = LINE_WIDTH;
+            bitmap.y = LINE_WIDTH;
+            bitmap.scaleX = scale;
+            bitmap.scaleY = scale;
             this.stage.addChildAt(bitmap, 0);
             this.createGlobes();
         };
