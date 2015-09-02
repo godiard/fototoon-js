@@ -22,16 +22,22 @@ define(function (require) {
         sugarCellSize = 55;
         sugarSubCellSize = 11;
     };
-    if (onAndroid) {
-        // set to the size of the bottom bar
-        sugarCellSize = 0;
-    }
 
     // Manipulate the DOM only when it is ready.
     require(['domReady!'], function (doc) {
 
         // Initialize the activity.
         activity.setup();
+
+        if (onAndroid) {
+            // hide activity and close buttons on android
+            var activityButton = document.getElementById("activity-button");
+            var stopButton = document.getElementById("stop-button");
+            var firstSeparator = document.getElementById("first-separator");
+            activityButton.style.display = 'none';
+            stopButton.style.display = 'none';
+            firstSeparator.style.display = 'none';
+        };
 
         // HERE GO YOUR CODE
 
