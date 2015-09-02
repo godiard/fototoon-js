@@ -95,3 +95,10 @@ button#CLOUD.icon {
   background-color: #ffffff;
   position: absolute;
 }
+
+/* This probably should be upstream (sugar-web, I don't know why
+   the separators in the toolbars are wrong */
+
+.toolbar hr {
+  margin-bottom: 5px;
+};
