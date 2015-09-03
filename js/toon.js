@@ -204,12 +204,16 @@ define(function (require) {
         this._textpalette = null;
 
         this.init = function () {
+            this._backContainer = new createjs.Container();
             var background = new createjs.Shape();
             background.graphics.setStrokeStyle(LINE_WIDTH, "round");
             background.graphics.beginStroke(
                 BLACK).drawRect(LINE_WIDTH, LINE_WIDTH,
                                 this._width, this._height);
-            this.stage.addChild(background);
+            this.stage.addChild(this._backContainer);
+            this._backContainer.addChild(background);
+            this._backContainer.cache(0, 0, this.canvas.width, this.canvas.height);
+
             if (this._data != null) {
                 if (this._data['image_name'] != '' &&
                     this._data['image_name'] != undefined) {
@@ -229,7 +233,8 @@ define(function (require) {
                                 if (bitmap != null) {
                                     bitmap.x = box._image_x;
                                     bitmap.y = box._image_y;
-                                    box.stage.addChildAt(bitmap, 0);
+                                    box._backContainer.addChildAt(bitmap, 0);
+                                    box._backContainer.updateCache();
                                 };
                                 box.createGlobes();
                             });
@@ -270,7 +275,8 @@ define(function (require) {
             bitmap.y = LINE_WIDTH;
             bitmap.scaleX = scale;
             bitmap.scaleY = scale;
-            this.stage.addChildAt(bitmap, 0);
+            this._backContainer.addChildAt(bitmap, 0);
+            this._backContainer.updateCache();
             this.createGlobes();
         };
 
