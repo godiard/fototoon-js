@@ -760,19 +760,19 @@ define(function (require) {
                 this._shapeControls.visible = true;
                 if (this._type != TYPE_RECTANGLE) {
                     this._pointerControl.visible = true;
+                    this._rotateButton.visible = true;
                 };
                 this._resizeButton.visible = true;
                 this._editButton.visible = true;
-                this._rotateButton.visible = true;
 
             } else {
                 this._shapeControls.visible = false;
                 if (this._type != TYPE_RECTANGLE) {
                     this._pointerControl.visible = false;
+                    this._rotateButton.visible = false;
                 };
                 this._resizeButton.visible = false;
                 this._editButton.visible = false;
-                this._rotateButton.visible = false;
             };
             this._stage.update();
         };
