@@ -149,6 +149,23 @@ define(function (require) {
         this.init = function() {
             this.activeBox = 0;
             comic_box_data = this._data['boxs'][this.activeBox];
+
+            if (this._data['boxs'].length == 1) {
+                if (comic_box_data['globes'].length == 0) {
+                    console.log('EMPTY TOON');
+                    // add a globe for the title
+                    var titleGlobe = {
+                        "direction": null, "text_font_description": "Sans 30",
+                        "globe_type": "RECTANGLE", "height": 50, "width": 200,
+                        "text_color": [0, 0, 0], "radio": 15, "text_width": 76,
+                        "y": this._canvas.height / 2,
+                        "x": this._canvas.width / 2,
+                        "text_height": 8, "title_globe": true,
+                        "text_text": "Título:"};
+                    comic_box_data['globes'].push(titleGlobe);
+                };
+            };
+
             this.comicBox = new ComicBox(this._canvas, comic_box_data);
             this.comicBox.init();
             this.comicBox.attachTextEditionPalette(this._textpalette);
