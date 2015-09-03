@@ -652,6 +652,14 @@ define(function (require) {
     function Globe(box, globeData) {
         this._box = box;
         this._stage = box.stage;
+        this._shapeControls = null;
+        this._pointerControl = null;
+        this._resizeButton = null;
+        this._editButton = null;
+        this._rotateButton = null;
+
+        this._shapeChanged = true;
+        this._pointerChanged = true;
 
         this.init = function() {
             if (globeData == null) {
@@ -703,7 +711,6 @@ define(function (require) {
             };
 
             this._shape = null;
-            this._controls = [];
         };
 
         this.createShape = function() {
@@ -750,15 +757,22 @@ define(function (require) {
         this.setSelected = function(selected) {
             if (selected) {
                 this._box.selectGlobe(this);
-                this._controls.forEach(
-                    function (element, index, array) {
-                        element.visible = true;
-                });
+                this._shapeControls.visible = true;
+                if (this._type != TYPE_RECTANGLE) {
+                    this._pointerControl.visible = true;
+                };
+                this._resizeButton.visible = true;
+                this._editButton.visible = true;
+                this._rotateButton.visible = true;
+
             } else {
-                this._controls.forEach(
-                    function (element, index, array) {
-                        element.visible = false;
-                });
+                this._shapeControls.visible = false;
+                if (this._type != TYPE_RECTANGLE) {
+                    this._pointerControl.visible = false;
+                };
+                this._resizeButton.visible = false;
+                this._editButton.visible = false;
+                this._rotateButton.visible = false;
             };
             this._stage.update();
         };
@@ -981,111 +995,155 @@ define(function (require) {
         };
 
         this.createControls = function() {
-            // remove controls if aready exist
-            this._controls.forEach(
-                function (element, index, array) {
-                    this._stage.removeChild(element);
-            }, this);
-
             var x = this._x;
             var y = this._y;
             var w = this._width;
             var h = this._height;
 
-            this._shapeControls = new createjs.Shape();
-            this._shapeControls.name = 'control_rect';
+            if (this._shapeControls != null && this._shapeChanged) {
+                this._stage.removeChild(this._shapeControls);
+                this._shapeControls = null;
+            };
 
-            // draw dotted rectangle around the globe
-            this._shapeControls.graphics.setStrokeStyle(1, "round");
-            this._shapeControls.graphics.beginStroke(WHITE);
-            this._shapeControls.graphics.rect(x - w , y - h, w * 2, h * 2);
-            this._shapeControls.graphics.setStrokeDash([2]);
-            this._shapeControls.graphics.beginFill("rgba(0, 0, 0, 0)");
-            this._shapeControls.graphics.beginStroke(BLACK);
-            this._shapeControls.graphics.rect(x - w , y - h, w * 2, h * 2);
-            this._shapeControls.graphics.endStroke();
+            if (this._shapeControls == null) {
+                this._shapeControls = new createjs.Shape();
+                this._shapeControls.name = 'control_rect';
 
-            this._shapeControls.visible = this.getSelected();
-            this._stage.addChild(this._shapeControls);
-            this._controls.push(this._shapeControls);
+                // draw dotted rectangle around the globe
+                this._shapeControls.graphics.setStrokeStyle(1, "round");
+                this._shapeControls.graphics.beginStroke(WHITE);
+                this._shapeControls.x = x;
+                this._shapeControls.y = y;
+                this._shapeControls.graphics.rect(- w ,- h, w * 2, h * 2);
+                this._shapeControls.graphics.setStrokeDash([2]);
+                this._shapeControls.graphics.beginFill("rgba(0, 0, 0, 0)");
+                this._shapeControls.graphics.beginStroke(BLACK);
+                this._shapeControls.graphics.rect(- w ,- h, w * 2, h * 2);
+                this._shapeControls.graphics.endStroke();
+
+                this._shapeControls.visible = this.getSelected();
+                this._stage.addChild(this._shapeControls);
+            } else {
+                this._shapeControls.visible = this.getSelected();
+                this._shapeControls.x = x;
+                this._shapeControls.y = y;
+            };
 
             // point position
             if (this._type != TYPE_RECTANGLE) {
-                this._pointerControl = new createjs.Shape();
-                point_pos = this.getPointPosition(false);
-                this._pointerControl.graphics.beginStroke(BLACK);
-                this._pointerControl.graphics.arc(point_pos[0], point_pos[1],
-                                                 SIZE_RESIZE_AREA / 2,
-                                                 0, 2 * Math.PI);
-                this._pointerControl.graphics.endStroke();
 
-                var hitArea = new createjs.Shape();
-                hitArea.graphics.beginFill("#000").arc(
-                    point_pos[0], point_pos[1], SIZE_RESIZE_AREA / 2,
-                    0, 2 * Math.PI);
-                this._pointerControl.hitArea = hitArea;
+                if (this._pointerControl != null &&
+                    (this._pointerChanged || this._shapeChanged)) {
+                    this._stage.removeChild(this._pointerControl);
+                    this._pointerControl = null;
+                };
 
-                this._pointerControl.visible = this.getSelected();
+                if (this._pointerControl == null) {
+                    this._pointerControl = new createjs.Shape();
+                    this._pointerControl.x = x;
+                    this._pointerControl.y = y;
+                    point_pos = this.getPointPositionRelative();
+                    this._pointerControl.graphics.beginStroke(BLACK);
+                    this._pointerControl.graphics.arc(point_pos[0], point_pos[1],
+                                                     SIZE_RESIZE_AREA / 2,
+                                                     0, 2 * Math.PI);
+                    this._pointerControl.graphics.endStroke();
 
-                this._stage.addChild(this._pointerControl);
-                this._controls.push(this._pointerControl);
+                    var hitArea = new createjs.Shape();
+                    hitArea.graphics.beginFill("#000").arc(
+                        point_pos[0], point_pos[1], SIZE_RESIZE_AREA / 2,
+                        0, 2 * Math.PI);
+                    this._pointerControl.hitArea = hitArea;
 
-                this._pointerControl.on("pressmove",function(event) {
-                    this.setPointPosition(event.stageX, event.stageY);
-                    this._box.selectGlobe(this);
-                    this.update();
-                }, this);
+                    this._pointerControl.visible = this.getSelected();
+
+                    this._stage.addChild(this._pointerControl);
+
+                    this._pointerControl.on("pressmove",function(event) {
+                        this.setPointPosition(event.stageX, event.stageY);
+                        this._box.selectGlobe(this);
+                        this._pointerChanged = true;
+                        this.update();
+                    }, this);
+                } else {
+                    this._pointerControl.x = x;
+                    this._pointerControl.y = y;
+                    this._pointerControl.visible = this.getSelected();
+                };
+
             };
 
-            createAsyncBitmapButton(this, './icons/resize.svg',
-                function(globe, button) {
-                    button.x = globe._x - globe._width - button.width / 2;
-                    button.y = globe._y - globe._height - button.height / 2;
-                    button.visible = globe.getSelected();
-                    globe._controls.push(button);
-                    globe._stage.addChild(button);
-                    globe._stage.update();
+            if (this._resizeButton == null) {
+                createAsyncBitmapButton(this, './icons/resize.svg',
+                    function(globe, button) {
+                        button.x = globe._x - globe._width - button.width / 2;
+                        button.y = globe._y - globe._height - button.height / 2;
+                        button.visible = globe.getSelected();
+                        globe._resizeButton = button;
+                        globe._stage.addChild(button);
+                        globe._stage.update();
 
-                    button.on('pressmove', function(event) {
-                        this._width = Math.max(globe._x - event.stageX,
-                                                SIZE_RESIZE_AREA / 2);
-                        this._height = Math.max(globe._y - event.stageY,
-                                                 SIZE_RESIZE_AREA / 2);
-                        this.update();
-                    }, globe);
+                        button.on('pressmove', function(event) {
+                            this._width = Math.max(globe._x - event.stageX,
+                                                    SIZE_RESIZE_AREA / 2);
+                            this._height = Math.max(globe._y - event.stageY,
+                                                     SIZE_RESIZE_AREA / 2);
+                            this._shapeChanged = true;
+                            this.update();
+                        }, globe);
 
-                });
-
-            createAsyncBitmapButton(this, './icons/edit.svg',
-                function(globe, button) {
-                    button.x = globe._x + globe._width - button.width / 2;
-                    button.y = globe._y - globe._height - button.height / 2;
-                    button.visible = globe.getSelected();
-                    globe._controls.push(button);
-                    globe._stage.addChild(button);
-                    globe._stage.update();
-
-                    button.on('click', function(event) {
-                        globe._box.popupTextEditionPalette();
                     });
-                });
+            } else {
+                this._resizeButton.x = this._x - this._width - this._resizeButton.width / 2;
+                this._resizeButton.y = this._y - this._height - this._resizeButton.height / 2;
+                this._resizeButton.visible = this.getSelected();
+            };
 
-
-            if (this._type != TYPE_RECTANGLE) {
-                createAsyncBitmapButton(this, './icons/object_rotate_right.svg',
+            if (this._editButton == null) {
+                createAsyncBitmapButton(this, './icons/edit.svg',
                     function(globe, button) {
                         button.x = globe._x + globe._width - button.width / 2;
-                        button.y = globe._y + globe._height - button.height / 2;
+                        button.y = globe._y - globe._height - button.height / 2;
                         button.visible = globe.getSelected();
-                        globe._controls.push(button);
+                        globe._editButton = button;
                         globe._stage.addChild(button);
                         globe._stage.update();
 
                         button.on('click', function(event) {
-                            globe.rotate();
+                            globe._box.popupTextEditionPalette();
                         });
                     });
+            } else {
+                this._editButton.x = this._x + this._width - this._editButton.width / 2;
+                this._editButton.y = this._y - this._height - this._editButton.height / 2;
+                this._editButton.visible = this.getSelected();
             };
+
+            if (this._type != TYPE_RECTANGLE) {
+
+                if (this._rotateButton == null) {
+                    createAsyncBitmapButton(this, './icons/object_rotate_right.svg',
+                        function(globe, button) {
+                            button.x = globe._x + globe._width - button.width / 2;
+                            button.y = globe._y + globe._height - button.height / 2;
+                            button.visible = globe.getSelected();
+                            globe._rotateButton = button;
+                            globe._stage.addChild(button);
+                            globe._stage.update();
+
+                            button.on('click', function(event) {
+                                globe.rotate();
+                            });
+                        });
+                } else {
+                    this._rotateButton.x = this._x + this._width - this._rotateButton.width / 2;
+                    this._rotateButton.y = this._y + this._height - this._rotateButton.height / 2;
+                    this._rotateButton.visible = this.getSelected();
+                };
+            };
+
+            this._shapeChanged = false;
+            this._pointerChanged = false;
         };
 
         this.rotate = function () {
@@ -1105,6 +1163,7 @@ define(function (require) {
             };
             var i = this._point[0];
             this._point[0] = this._point[1]; this._point[1] = i;
+            this._pointerChanged = true;
             this.update();
         };
 
@@ -1141,6 +1200,22 @@ define(function (require) {
                 case DIR_UP:
                     return [x + this._point[0] / scale_x,
                         y - h - this._point[1] / scale_y];
+            };
+        };
+
+        this.getPointPositionRelative = function () {
+            var w = this._width;
+            var h = this._height;
+
+            switch (this._direction) {
+                case DIR_DOWN:
+                    return [this._point[0], h + this._point[1]];
+                case DIR_RIGHT:
+                    return [w + this._point[0], this._point[1]];
+                case DIR_LEFT:
+                    return [- w - this._point[0], this._point[1]];
+                case DIR_UP:
+                    return [this._point[0], - h - this._point[1]];
             };
         };
 
