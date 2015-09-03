@@ -380,7 +380,7 @@ define(function (require) {
 
             var globe = new Globe(this, globeData);
             this.globes.push(globe);
-            this.init();
+            this.stage.update();
         };
 
         this.getJson = function() {
