@@ -661,6 +661,10 @@ define(function (require) {
             };
         };
 
+        this.remove = function() {
+            this._globe._stage.removeChild(this._textView);
+        };
+
         this.init();
         return this;
     };
@@ -1214,7 +1218,24 @@ define(function (require) {
         };
 
         this.remove = function() {
-            console.log('REMOVE GLOBE');
+            var globeIndex = this._box.globes.indexOf(this);
+            if (globeIndex != -1) {
+                this._box.globes.splice(globeIndex, 1);
+                this._stage.removeChild(this._shape);
+                this._stage.removeChild(this._shapeControls);
+                if (this._type != TYPE_RECTANGLE) {
+                    this._stage.removeChild(this._pointerControl);
+                    this._stage.removeChild(this._rotateButton);
+                };
+                if (this._type == TYPE_CLOUD) {
+                    this._stage.removeChild(this._shapeCircles);
+                };
+                this._stage.removeChild(this._resizeButton);
+                this._stage.removeChild(this._editButton);
+                this._stage.removeChild(this._removeButton);
+                this._textViewer.remove();
+                this._stage.update();
+            };
         };
 
         this.update = function() {
