@@ -674,6 +674,7 @@ define(function (require) {
         this._resizeButton = null;
         this._editButton = null;
         this._rotateButton = null;
+        this._removeButton = null;
 
         this._shapeChanged = true;
         this._pointerChanged = true;
@@ -692,7 +693,7 @@ define(function (require) {
                 this._textViewer = new TextViewer(this, null);
                 this._mode = MODE_NORMAL;
                 // title_globe can't be deleted
-                this._title_globe = false;
+                this._isTitleGlobe = false;
             } else {
                 /* example of the json data stored
 
@@ -724,7 +725,7 @@ define(function (require) {
                 this._radio = globeData['radio'];
                 this._direction = globeData['direction'];
                 this._textViewer = new TextViewer(this, globeData);
-                this._title_globe = globeData['title_globe'];
+                this._isTitleGlobe = globeData['title_globe'];
             };
 
             this._shape = null;
@@ -781,6 +782,9 @@ define(function (require) {
                 };
                 this._resizeButton.visible = true;
                 this._editButton.visible = true;
+                if (!this._isTitleGlobe) {
+                    this._removeButton.visible = true;
+                };
 
             } else {
                 this._shapeControls.visible = false;
@@ -790,6 +794,9 @@ define(function (require) {
                 };
                 this._resizeButton.visible = false;
                 this._editButton.visible = false;
+                if (!this._isTitleGlobe) {
+                    this._removeButton.visible = false;
+                };
             };
             this._stage.update();
         };
@@ -1159,6 +1166,28 @@ define(function (require) {
                 };
             };
 
+            if (! this._isTitleGlobe) {
+                if (this._removeButton == null) {
+                    createAsyncBitmapButton(this, './icons/remove.svg',
+                        function(globe, button) {
+                            button.x = globe._x - globe._width - button.width / 2;
+                            button.y = globe._y + globe._height - button.height / 2;
+                            button.visible = globe.getSelected();
+                            globe._removeButton = button;
+                            globe._stage.addChild(button);
+                            globe._stage.update();
+
+                            button.on('click', function(event) {
+                                globe.remove();
+                            });
+                        });
+                } else {
+                    this._removeButton.x = this._x - this._width - this._removeButton.width / 2;
+                    this._removeButton.y = this._y + this._height - this._removeButton.height / 2;
+                    this._removeButton.visible = this.getSelected();
+                };
+            };
+
             this._shapeChanged = false;
             this._pointerChanged = false;
         };
@@ -1182,6 +1211,10 @@ define(function (require) {
             this._point[0] = this._point[1]; this._point[1] = i;
             this._pointerChanged = true;
             this.update();
+        };
+
+        this.remove = function() {
+            console.log('REMOVE GLOBE');
         };
 
         this.update = function() {
