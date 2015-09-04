@@ -358,6 +358,7 @@ define(function (require) {
         this.popupTextEditionPalette = function() {
             if (this._textpalette != null) {
                 this._textpalette.popUp();
+                this._textpalette.editorElem.focus();
             };
         };
 
