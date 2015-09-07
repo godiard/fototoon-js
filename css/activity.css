@@ -60,6 +60,11 @@
   resize: none;
 }
 
+/* fix padding on textpalette title */
+#text-palette .row.small {
+    padding: 10px 10px 0px 10px;
+}
+
 /* these are the icons in the globes menu */
 button.icon {
   background-repeat: no-repeat;
