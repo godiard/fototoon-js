@@ -23,6 +23,21 @@ define(function (require) {
         sugarSubCellSize = 11;
     };
 
+    var l10n = require("webL10n");
+    var lang = navigator.language.substr(0, 2)
+    console.log('LANG ' + lang);
+
+    function _(text) {
+        // this function add a fallback for the case of translation not found
+        // can be removed when we find how to read the localization.ini
+        // file in the case of local html file opened in the browser
+        translation = l10n.get(text);
+        if (translation == '') {
+            translation = text;
+        };
+        return translation;
+    };
+
     // Manipulate the DOM only when it is ready.
     require(['domReady!'], function (doc) {
 
@@ -136,24 +151,25 @@ define(function (require) {
         });
 
         var textButton = document.getElementById("text-button");
-        var tp = new textpalette.TextPalette(textButton, toonModel);
+        var tp = new textpalette.TextPalette(textButton, toonModel,
+                                             _('SetGlobeText'));
 
         var toonModel = new toon.Model(initialData, mainCanvas, tp);
         toonModel.init();
 
         var addGlobeButton = document.getElementById("add-globe");
         var menuData = [{'icon': true, 'id': toon.TYPE_GLOBE,
-                         'label': 'Add a globe'},
+                         'label': _('Globe')},
                         {'icon': true, 'id': toon.TYPE_EXCLAMATION,
-                         'label': 'Add a exclamation'},
+                         'label': _('Exclamation')},
                         {'icon': true, 'id': toon.TYPE_WHISPER,
-                         'label': 'Add a whisper'},
+                         'label': _('Whisper')},
                         {'icon': true, 'id': toon.TYPE_CLOUD,
-                         'label': 'Add a thinking'},
+                         'label': _('Think')},
                         {'icon': true, 'id': toon.TYPE_RECTANGLE,
-                         'label': 'Add a text box'},];
+                         'label': _('Box')},];
         var mp = new menupalette.MenuPalette(addGlobeButton,
-            "Add globes", menuData);
+            _("Add a globe"), menuData);
 
         for (var i = 0; i < mp.buttons.length; i++) {
             mp.buttons[i].addEventListener('click', function(e) {

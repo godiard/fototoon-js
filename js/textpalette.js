@@ -4,7 +4,7 @@ define(["sugar-web/graphics/palette"], function (palette) {
 
     var textpalette = {};
 
-    textpalette.TextPalette = function (textButton, toonModel) {
+    textpalette.TextPalette = function (textButton, toonModel, title) {
 
         palette.Palette.call(this, textButton);
 
@@ -13,7 +13,7 @@ define(["sugar-web/graphics/palette"], function (palette) {
         var containerElem = document.createElement('div');
 
         var content = '<div class="row small">' +
-            '<label>Set globe text:</label>' +
+            '<label>' + title + '</label>' +
             '</div>' +
             '<div class="row expand">' +
             '<textarea rows="8" id="editor" class="expand"></textarea>' +

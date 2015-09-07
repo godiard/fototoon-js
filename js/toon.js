@@ -58,6 +58,17 @@ define(function (require) {
 
     require("easel");
 
+    var l10n = require("webL10n");
+
+    function _(text) {
+        // copied from activity.js
+        translation = l10n.get(text);
+        if (translation == '') {
+            translation = text;
+        };
+        return translation;
+    };
+
     var onAndroid = /Android/i.test(navigator.userAgent);
 
     var smallScreen = (window.innerWidth < 700) || (window.innerHeight < 600);
@@ -161,7 +172,7 @@ define(function (require) {
                         "y": this._canvas.height / 2,
                         "x": this._canvas.width / 2,
                         "text_height": 8, "title_globe": true,
-                        "text_text": "Título:"};
+                        "text_text": _('Title:')};
                     comic_box_data['globes'].push(titleGlobe);
                 };
             };
