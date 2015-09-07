@@ -12,6 +12,7 @@ requirejs.config({
         toon: "../js/toon",
         textpalette: "../js/textpalette",
         jszip: "../lib/jszip.min",
+        localizationData: "../js/localization_data",
     }
 });
 

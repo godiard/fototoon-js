@@ -23,15 +23,15 @@ define(function (require) {
         sugarSubCellSize = 11;
     };
 
-    var l10n = require("webL10n");
-    var lang = navigator.language.substr(0, 2)
+    var localizationData = require("localizationData");
+    var lang = navigator.language.substr(0, 2);
     console.log('LANG ' + lang);
 
     function _(text) {
         // this function add a fallback for the case of translation not found
         // can be removed when we find how to read the localization.ini
         // file in the case of local html file opened in the browser
-        translation = l10n.get(text);
+        translation = localizationData[lang][text];
         if (translation == '') {
             translation = text;
         };

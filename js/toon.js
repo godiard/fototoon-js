@@ -58,11 +58,12 @@ define(function (require) {
 
     require("easel");
 
-    var l10n = require("webL10n");
+    var localizationData = require("localizationData");
+    var lang = navigator.language.substr(0, 2);
 
     function _(text) {
         // copied from activity.js
-        translation = l10n.get(text);
+        translation = localizationData[lang][text];
         if (translation == '') {
             translation = text;
         };
@@ -172,7 +173,7 @@ define(function (require) {
                         "y": this._canvas.height / 2,
                         "x": this._canvas.width / 2,
                         "text_height": 8, "title_globe": true,
-                        "text_text": _('Title:')};
+                        "text_text": _('Title')};
                     comic_box_data['globes'].push(titleGlobe);
                 };
             };
