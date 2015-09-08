@@ -223,22 +223,39 @@ define(function (require) {
             var reader = new FileReader();
             reader.onload = (function(theFile) {
                 return function(e) {
-                    console.log('e ' + e);
                     try {
                         // read the content of the file with JSZip
                         var zip = new JSZip(e.target.result);
+                        var data = {};
+                        // NOTE: This code assume data.json file
+                        // is stored before the images
                         $.each(zip.files, function (index, zipEntry) {
                             console.log('reading ' + zipEntry.name);
-                            // the content is here : zipEntry.asText()
                             if (zipEntry.name == 'data.json') {
                                 data = JSON.parse(zipEntry.asText());
-                                toonModel = new toon.Model(data, mainCanvas, tp);
-                                toonModel.init();
+                                if (data['images'] == undefined) {
+                                    data['images'] = {};
+                                };
+                            } else {
+                                // load the image data in a blob, and read
+                                // with a filereader to store as a data url
+                                var imageBlob = new Blob(
+                                    [zipEntry.asArrayBuffer()], {type: 'image/png'});
+                                var reader = new FileReader();
+                                reader.onloadend = (function () {
+                                    // store the image data in the model data
+                                    data['images'][zipEntry.name] = reader.result;
+                                });
+                                reader.readAsDataURL(imageBlob);
                             };
                         });
 
+                        toonModel = new toon.Model(data, mainCanvas, tp);
+                        toonModel.init();
+
                     } catch(e) {
-                        console.log('Exception ' + theFile.name + " : " + e.message);
+                        console.log('Exception ' + e.message);
+                        console.log('Reading file ' + theFile.name);
                     };
                 };
             })(file);
@@ -246,10 +263,7 @@ define(function (require) {
             if (file) {
                 reader.readAsArrayBuffer(file);
             };
-
         }, false);
-
-
 
     });
 

@@ -178,7 +178,8 @@ define(function (require) {
                 };
             };
 
-            this.comicBox = new ComicBox(this._canvas, comic_box_data);
+            this.comicBox = new ComicBox(this._canvas, comic_box_data,
+                                         this._data['images']);
             this.comicBox.init();
             this.comicBox.attachTextEditionPalette(this._textpalette);
         };
@@ -215,10 +216,11 @@ define(function (require) {
 
     };
 
-    function ComicBox(canvas, data) {
+    function ComicBox(canvas, data, imagesData) {
 
         this.canvas = canvas;
         this._data = data;
+        this.imagesData = imagesData
         this._width = canvas.width - LINE_WIDTH * 2;
         this._height = canvas.height - LINE_WIDTH * 2;
 
@@ -256,17 +258,22 @@ define(function (require) {
                     if (this._image_name.indexOf('data:') == 0) {
                         this.setBackgroundImageName(this._data['image_name']);
                     } else {
-                        createAsyncBitmap(this,
-                            './data/' + this._image_name,
-                            function(box, bitmap) {
-                                if (bitmap != null) {
-                                    bitmap.x = box._image_x;
-                                    bitmap.y = box._image_y;
-                                    box._backContainer.addChildAt(bitmap, 0);
-                                    box._backContainer.updateCache();
-                                };
-                                box.createGlobes();
-                            });
+                        if (this.imagesData != null) {
+                            this.setBackgroundImageName(
+                                this.imagesData[this._image_name]);
+                        } else {
+                            var imageUrl = './data/' + this._image_name;
+                            createAsyncBitmap(this, imageUrl,
+                                function(box, bitmap) {
+                                    if (bitmap != null) {
+                                        bitmap.x = box._image_x;
+                                        bitmap.y = box._image_y;
+                                        box._backContainer.addChildAt(bitmap, 0);
+                                        box._backContainer.updateCache();
+                                    };
+                                    box.createGlobes();
+                                });
+                        };
                     };
                 } else {
                     this._image_x = 0;
