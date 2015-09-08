@@ -6,6 +6,10 @@
   background-image: url(../icons/document-open.svg);
 }
 
+#doc-save {
+  background-image: url(../icons/document-save.svg);
+}
+
 #previous-button {
   background-image: url(../icons/go-previous-paired.svg);
 }
