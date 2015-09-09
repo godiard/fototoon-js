@@ -266,10 +266,42 @@ define(function (require) {
             };
         }, false);
 
+        function dataURItoString(dataURI) {
+            // from http://stackoverflow.com/questions/4998908/
+            // convert-data-uri-to-file-then-append-to-formdata/5100158#5100158
+            // convert base64/URLEncoded data component to raw binary data held in a string
+            var byteString;
+            if (dataURI.split(',')[0].indexOf('base64') >= 0)
+                byteString = atob(dataURI.split(',')[1]);
+            else
+                byteString = unescape(dataURI.split(',')[1]);
+
+            return byteString;
+        };
+
         var saveButton = document.getElementById("doc-save");
         saveButton.addEventListener('click', function (e) {
             zip = new JSZip();
-            zip.file("data.json", JSON.stringify(toonModel.getData()));
+            // this line is enough to read the file on the js version
+            // because the images data is stored as data uris.
+            // but the objective is have  file format compatible
+            // with the python version
+
+            // zip.file("data.json", JSON.stringify(toonModel.getData()));
+
+            // clone the data to remove the images
+            var dataWithoutImages = {}
+            dataWithoutImages['version'] = toonModel.getData()['version'];
+            dataWithoutImages['boxs'] = toonModel.getData()['boxs'];
+            zip.file("data.json", JSON.stringify(dataWithoutImages));
+
+            for(var key in toonModel.getData()['images']) {
+                var imageName = key;
+                console.log('saving image ' + imageName);
+                zip.file(imageName,
+                         dataURItoString(toonModel.getData()['images'][imageName]),
+                         {'binary': true});
+            };
 
             var blob = zip.generate({type:"blob"});
             saveAs(blob, "new.fototoon");
