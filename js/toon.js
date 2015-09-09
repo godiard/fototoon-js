@@ -277,18 +277,6 @@ define(function (require) {
                     if (this.imagesData != null) {
                         this._setBackgroundImageDataUrl(
                             this.imagesData[this._image_name]);
-                    } else {
-                        var imageUrl = './data/' + this._image_name;
-                        createAsyncBitmap(this, imageUrl,
-                            function(box, bitmap) {
-                                if (bitmap != null) {
-                                    bitmap.x = box._image_x;
-                                    bitmap.y = box._image_y;
-                                    box._backContainer.addChildAt(bitmap, 0);
-                                    box._backContainer.updateCache();
-                                };
-                                box.createGlobes();
-                            });
                     };
                 } else {
                     this._image_x = 0;
