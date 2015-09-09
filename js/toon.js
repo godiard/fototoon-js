@@ -189,7 +189,8 @@ define(function (require) {
                 this._data['boxs'][this.activeBox] = this.comicBox.getJson();
                 // load the new data
                 this.activeBox = newOrder;
-                this.comicBox.setData(this._data['boxs'][this.activeBox]);
+                this.comicBox.setData(this._data['boxs'][this.activeBox],
+                                      this._data['images']);
             };
         };
 
@@ -208,10 +209,15 @@ define(function (require) {
         };
 
         this.addImage = function(url) {
-            var emptyData = {'globes':[]};
+            if (this._data['images'] == undefined) {
+                this._data['images'] = {};
+            };
+            var boxNumber = this._data['boxs'].length + 1;
+            var imageName = 'bAcKgRoUnD_' + boxNumber;
+            var emptyData = {'image_name': imageName, 'globes':[]};
             this._data['boxs'].push(emptyData);
+            this._data['images'][imageName] = url;
             this.changeBox(this._data['boxs'].length - 1);
-            this.comicBox.setBackgroundImageName(url);
         };
 
         this.getData = function() {
@@ -259,25 +265,21 @@ define(function (require) {
                     this._image_name = this._data['image_name'];
                     this._slideshow_duration = this._data['slideshow_duration'];
 
-                    if (this._image_name.indexOf('data:') == 0) {
-                        this.setBackgroundImageName(this._data['image_name']);
+                    if (this.imagesData != null) {
+                        this._setBackgroundImageDataUrl(
+                            this.imagesData[this._image_name]);
                     } else {
-                        if (this.imagesData != null) {
-                            this.setBackgroundImageName(
-                                this.imagesData[this._image_name]);
-                        } else {
-                            var imageUrl = './data/' + this._image_name;
-                            createAsyncBitmap(this, imageUrl,
-                                function(box, bitmap) {
-                                    if (bitmap != null) {
-                                        bitmap.x = box._image_x;
-                                        bitmap.y = box._image_y;
-                                        box._backContainer.addChildAt(bitmap, 0);
-                                        box._backContainer.updateCache();
-                                    };
-                                    box.createGlobes();
-                                });
-                        };
+                        var imageUrl = './data/' + this._image_name;
+                        createAsyncBitmap(this, imageUrl,
+                            function(box, bitmap) {
+                                if (bitmap != null) {
+                                    bitmap.x = box._image_x;
+                                    bitmap.y = box._image_y;
+                                    box._backContainer.addChildAt(bitmap, 0);
+                                    box._backContainer.updateCache();
+                                };
+                                box.createGlobes();
+                            });
                     };
                 } else {
                     this._image_x = 0;
@@ -292,11 +294,7 @@ define(function (require) {
             this.stage.update();
         };
 
-        this.setBackgroundImageName = function(imageUrl) {
-            // load the url in the data, for persistence
-            //this._data['image_name'] = imageUrl;
-            // this is the property used to draw later
-            this._image_name = imageUrl;
+        this._setBackgroundImageDataUrl = function(imageUrl) {
             this._image_x = 0;
             this._image_y = 0;
             this._image_width = this._width;
@@ -320,8 +318,9 @@ define(function (require) {
             this.createGlobes();
         };
 
-        this.setData = function(data) {
+        this.setData = function(data, imagesData) {
             this._data = data;
+            this.imagesData = imagesData
             this.globes = [];
             this.stage.removeAllChildren();
             this.init();
