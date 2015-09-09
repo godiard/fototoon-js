@@ -158,6 +158,7 @@ define(function (require) {
         this._textpalette = textpalette;
         this.comicBox = null;
         this._imageCounter = 0;
+        this._pageCounterDisplay = null;
 
         this.init = function() {
             this.activeBox = 0;
@@ -193,6 +194,15 @@ define(function (require) {
                 this.activeBox = newOrder;
                 this.comicBox.setData(this._data['boxs'][this.activeBox],
                                       this._data['images']);
+
+                this._updatePageCounter();
+            };
+        };
+
+        this._updatePageCounter = function() {
+            if (this._pageCounterDisplay != null) {
+                this._pageCounterDisplay.innerHTML = (this.activeBox + 1) +
+                    ' ' + _('of') + ' ' + this._data['boxs'].length;
             };
         };
 
@@ -231,6 +241,11 @@ define(function (require) {
 
         this.getData = function() {
             return this._data;
+        };
+
+        this.attachPageCounterViewer = function(div) {
+            this._pageCounterDisplay = div.children[0];
+            this._updatePageCounter();
         };
 
     };

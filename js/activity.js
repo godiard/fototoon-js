@@ -155,8 +155,12 @@ define(function (require) {
         var tp = new textpalette.TextPalette(textButton, toonModel,
                                              _('SetGlobeText'));
 
+       // page counter
+        var pageCounter = document.getElementById("page-counter");
+
         var toonModel = new toon.Model(initialData, mainCanvas, tp);
         toonModel.init();
+        toonModel.attachPageCounterViewer(pageCounter);
 
         var addGlobeButton = document.getElementById("add-globe");
         var menuData = [{'icon': true, 'id': toon.TYPE_GLOBE,
@@ -253,6 +257,7 @@ define(function (require) {
 
                         toonModel = new toon.Model(data, mainCanvas, tp);
                         toonModel.init();
+                        toonModel.attachPageCounterViewer(pageCounter);
 
                     } catch(e) {
                         console.log('Exception ' + e.message);
