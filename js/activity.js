@@ -133,6 +133,7 @@ define(function (require) {
         };
 
         require("toon");
+        require("filesaver");
 
         var mainCanvas = document.getElementById("mainCanvas");
         // remove 5 more to be sure no scrollbars are visible
@@ -264,6 +265,16 @@ define(function (require) {
                 reader.readAsArrayBuffer(file);
             };
         }, false);
+
+        var saveButton = document.getElementById("doc-save");
+        saveButton.addEventListener('click', function (e) {
+            zip = new JSZip();
+            zip.file("data.json", JSON.stringify(toonModel.getData()));
+
+            var blob = zip.generate({type:"blob"});
+            saveAs(blob, "new.fototoon");
+
+       });
 
     });
 

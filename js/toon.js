@@ -214,6 +214,10 @@ define(function (require) {
             this.comicBox.setBackgroundImageName(url);
         };
 
+        this.getData = function() {
+            return this._data;
+        };
+
     };
 
     function ComicBox(canvas, data, imagesData) {

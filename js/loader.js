@@ -13,6 +13,7 @@ requirejs.config({
         textpalette: "../js/textpalette",
         jszip: "../lib/jszip.min",
         localizationData: "../js/localization_data",
+        filesaver: "../lib/FileSaver.min",
     }
 });
 
