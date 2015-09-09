@@ -157,10 +157,12 @@ define(function (require) {
         this._canvas = canvas;
         this._textpalette = textpalette;
         this.comicBox = null;
+        this._imageCounter = 0;
 
         this.init = function() {
             this.activeBox = 0;
             comic_box_data = this._data['boxs'][this.activeBox];
+            this._imageCounter = this._data['boxs'].length;
 
             if (this._data['boxs'].length == 1) {
                 if (comic_box_data['globes'].length == 0) {
@@ -212,8 +214,15 @@ define(function (require) {
             if (this._data['images'] == undefined) {
                 this._data['images'] = {};
             };
-            var boxNumber = this._data['boxs'].length + 1;
-            var imageName = 'bAcKgRoUnD_' + boxNumber;
+
+            this._imageCounter = this._imageCounter + 1;
+            var imageName = 'bAcKgRoUnD_' + this._imageCounter;
+            // verify if the name already exists
+            while (this._data['images'][imageName] != undefined) {
+                this._imageCounter = this._imageCounter + 1;
+                imageName = 'bAcKgRoUnD_' + this._imageCounter;
+            };
+
             var emptyData = {'image_name': imageName, 'globes':[]};
             this._data['boxs'].push(emptyData);
             this._data['images'][imageName] = url;
