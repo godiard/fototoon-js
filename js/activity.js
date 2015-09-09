@@ -161,6 +161,7 @@ define(function (require) {
         var toonModel = new toon.Model(initialData, mainCanvas, tp);
         toonModel.init();
         toonModel.attachPageCounterViewer(pageCounter);
+        toonModel.attachPrevNextButtons(previousButton, nextButton);
 
         var addGlobeButton = document.getElementById("add-globe");
         var menuData = [{'icon': true, 'id': toon.TYPE_GLOBE,
@@ -258,6 +259,7 @@ define(function (require) {
                         toonModel = new toon.Model(data, mainCanvas, tp);
                         toonModel.init();
                         toonModel.attachPageCounterViewer(pageCounter);
+                        toonModel.attachPrevNextButtons(previousButton, nextButton);
 
                     } catch(e) {
                         console.log('Exception ' + e.message);

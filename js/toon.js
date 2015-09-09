@@ -159,6 +159,8 @@ define(function (require) {
         this.comicBox = null;
         this._imageCounter = 0;
         this._pageCounterDisplay = null;
+        this._prevButton = null;
+        this._nextButton = null;
 
         this.init = function() {
             this.activeBox = 0;
@@ -204,6 +206,13 @@ define(function (require) {
                 this._pageCounterDisplay.innerHTML = (this.activeBox + 1) +
                     ' ' + _('of') + ' ' + this._data['boxs'].length;
             };
+            if (this._prevButton != null) {
+                this._prevButton.disabled = (this.activeBox == 0);
+            };
+            if (this._nextButton != null) {
+                this._nextButton.disabled = (this.activeBox ==
+                                             (this._data['boxs'].length - 1));
+            };
         };
 
         this.addGlobe = function(globeType) {
@@ -246,6 +255,11 @@ define(function (require) {
         this.attachPageCounterViewer = function(div) {
             this._pageCounterDisplay = div.children[0];
             this._updatePageCounter();
+        };
+
+        this.attachPrevNextButtons = function(prevButton, nextButton) {
+            this._prevButton = prevButton;
+            this._nextButton = nextButton;
         };
 
     };
