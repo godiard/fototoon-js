@@ -175,6 +175,7 @@ define(function (require) {
         this._prevButton = null;
         this._nextButton = null;
         this._boxSorter = null;
+        this._data['previews'] = [];
 
         this.init = function() {
             this.activeBox = 0;
@@ -196,11 +197,6 @@ define(function (require) {
                     comic_box_data['globes'].push(titleGlobe);
                 };
             };
-            // init empty previews for every box
-            this._data['previews'] = [];
-            for (var i = 0; i < this._data['boxs'].length; i++) {
-                this._data['previews'].push(null);
-            };
 
             this.comicBox = new ComicBox(this._canvas, comic_box_data,
                                          this._data['images']);
@@ -217,8 +213,7 @@ define(function (require) {
             if (newOrder >= 0 && newOrder < this._data['boxs'].length) {
                 this._data['boxs'][this.activeBox] = this.comicBox.getJson();
                 // store the preview
-                this._data['previews'][this.activeBox] =
-                    this._canvas.toDataURL("image/png");
+                this.storePreview();
 
                 // load the new data
                 this.activeBox = newOrder;
@@ -227,6 +222,12 @@ define(function (require) {
 
                 this._updatePageCounter();
             };
+        };
+
+        this.storePreview = function() {
+            this._data['previews'][this.activeBox] =
+                this._canvas.toDataURL("image/png");
+
         };
 
         this._updatePageCounter = function() {
@@ -1412,7 +1413,52 @@ define(function (require) {
             this.stage.addChild(this._backContainer);
             this._backContainer.addChild(background);
             this._backContainer.cache(0, 0, this.canvas.width, this.canvas.height);
+
+            this.loadPreviews();
             this.stage.update();
+        };
+
+        this.loadPreviews = function () {
+            // create bitmaps for every box preview (if not avilable,
+            // use the background
+            var previewHeight = this._height;
+            var previewWidth = this._height * 4 / 3;
+            for (var i = 0;i < this._data['boxs'].length; i++) {
+                var imageData = this._data['previews'][i];
+                if (imageData == undefined) {
+                    var imageName = this._data['boxs'][i]['image_name'];
+                    // if the preview was not loaded use the background
+                    if (imageName != '' && imageName != undefined) {
+                        imageData = this._data['images'][imageName];
+                    };
+                };
+                if (imageData != undefined) {
+                    this._createPreview(imageData, previewWidth, previewHeight, i);
+                };
+            };
+
+        };
+
+        this._createPreview = function(imageUrl, width, height, order) {
+            var img = new Image();
+            img.src = imageUrl;
+            bitmap = new createjs.Bitmap(img);
+            bitmap.setBounds(0, 0, img.width, img.height);
+            // calculate scale
+            var scale_x = width / img.width;
+            var scale_y = height / img.height;
+            var scale = Math.min(scale_x, scale_y);
+
+            bitmap.x = width * order;
+            bitmap.y = 0;
+            bitmap.scaleX = scale;
+            bitmap.scaleY = scale;
+
+            var hitArea = new createjs.Shape();
+            hitArea.graphics.beginFill("#000").drawRect(0, 0, width, height);
+            bitmap.hitArea = hitArea;
+
+            this.stage.addChild(bitmap);
         };
 
     };

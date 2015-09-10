@@ -327,6 +327,7 @@ define(function (require) {
                 return;
             };
             if (editMode) {
+                toonModel.storePreview();
                 // resize the canvas
                 mainCanvas.width = window.innerWidth - sugarCellSize * 2;
                 var boxWidth = mainCanvas.width / toonModel.getData()['boxs'].length;
