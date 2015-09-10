@@ -1398,6 +1398,8 @@ define(function (require) {
         this._data = data;
         this._width = canvas.width - LINE_WIDTH * 2;
         this._height = canvas.height - LINE_WIDTH * 2;
+        this._previewWidth = this._height * 4 / 3;
+        this._previewBitmaps = [];
 
         this.stage = new createjs.Stage(canvas);
         // Enable touch interactions if supported on the current device
@@ -1421,8 +1423,6 @@ define(function (require) {
         this.loadPreviews = function () {
             // create bitmaps for every box preview (if not avilable,
             // use the background
-            var previewHeight = this._height;
-            var previewWidth = this._height * 4 / 3;
             for (var i = 0;i < this._data['boxs'].length; i++) {
                 var imageData = this._data['previews'][i];
                 if (imageData == undefined) {
@@ -1433,30 +1433,69 @@ define(function (require) {
                     };
                 };
                 if (imageData != undefined) {
-                    this._createPreview(imageData, previewWidth, previewHeight, i);
+                    this._createPreview(imageData, i);
                 };
             };
 
         };
 
-        this._createPreview = function(imageUrl, width, height, order) {
+        this._createPreview = function(imageUrl, order) {
             var img = new Image();
             img.src = imageUrl;
             bitmap = new createjs.Bitmap(img);
             bitmap.setBounds(0, 0, img.width, img.height);
+            bitmap._order = order;
             // calculate scale
-            var scale_x = width / img.width;
-            var scale_y = height / img.height;
+            var scale_x = this._previewWidth / img.width;
+            var scale_y = this._height / img.height;
             var scale = Math.min(scale_x, scale_y);
 
-            bitmap.x = width * order;
+            bitmap.x = this._previewWidth * order;
             bitmap.y = 0;
             bitmap.scaleX = scale;
             bitmap.scaleY = scale;
 
             var hitArea = new createjs.Shape();
-            hitArea.graphics.beginFill("#000").drawRect(0, 0, width, height);
+            hitArea.graphics.beginFill("#000").drawRect(
+                0, 0, this._previewWidth, this._height);
             bitmap.hitArea = hitArea;
+
+            // don't move first box
+            if (order > 0) {
+                this._previewBitmaps.push(bitmap);
+
+                bitmap.on('mousedown', function(event) {
+                    event.target._deltaX = event.stageX - event.target.x;
+                    var thisBitmap = event.target;
+                    this.stage.sortChildren(function (bitmapA, bitmapB) {
+                        if (bitmapA == thisBitmap) {
+                            return 1;
+                        } else {
+                            return 0;
+                        };});
+                    //this.stage.setChildIndex(event.target);
+                }, this);
+
+                bitmap.on('pressmove', function(event) {
+                    new_x = event.stageX - event.target._deltaX;
+                    if (new_x > this._previewWidth / 2) {
+                        event.target.x = new_x;
+                        this.stage.update();
+                    };
+                }, this);
+
+                bitmap.on('pressup', function(event) {
+                    // sort the preview bitmaps
+                    this._previewBitmaps.sort(function (bitmapA, bitmapB) {
+                        return bitmapA.x - bitmapB.x;});
+                    // adjust the positions
+                    for (var i = 0; i < this._previewBitmaps.length; i++) {
+                        this._previewBitmaps[i].x = this._previewWidth * (i + 1);
+                    };
+                    this.stage.update();
+                }, this);
+
+            };
 
             this.stage.addChild(bitmap);
         };
