@@ -336,6 +336,7 @@ define(function (require) {
                 // hide the page counter
                 pageCounter.style.display = "none";
             } else {
+                toonModel.finishSort();
                 // set the edition original size
                 mainCanvas.height = window.innerHeight - sugarCellSize - 5;
                 mainCanvas.width = mainCanvas.height * 4 / 3;

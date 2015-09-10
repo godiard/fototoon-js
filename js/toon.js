@@ -209,6 +209,17 @@ define(function (require) {
             this._boxSorter.init();
         };
 
+        this.finishSort = function() {
+            var sortedBoxes = [];
+            // get a rray with the new order for the boxes, like [0, 3, 2, 1]
+            var newOrders = this._boxSorter.getSortOrder();
+            for (var i = 0; i < newOrders.length; i++) {
+                sortedBoxes.push(this._data['boxs'][newOrders[i]]);
+            };
+            this._data['boxs'] = sortedBoxes;
+
+        };
+
         this.changeBox = function(newOrder) {
             if (newOrder >= 0 && newOrder < this._data['boxs'].length) {
                 this._data['boxs'][this.activeBox] = this.comicBox.getJson();
@@ -1437,6 +1448,14 @@ define(function (require) {
                 };
             };
 
+        };
+
+        this.getSortOrder = function() {
+            var newOrder = [0];
+            for (var i = 0; i < this._previewBitmaps.length; i++) {
+                newOrder.push(this._previewBitmaps[i]._order);
+            };
+            return newOrder;
         };
 
         this._createPreview = function(imageUrl, order) {
