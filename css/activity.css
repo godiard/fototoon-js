@@ -19,7 +19,7 @@
 }
 
 #add-button {
-  background-image: url(../icons/list-add.svg);
+  background-image: url(../icons/insert-picture.svg);
 }
 
 #add-globe {
@@ -28,6 +28,10 @@
 
 #text-button {
   background-image: url(../icons/format-text-size.svg);
+}
+
+#sort-button {
+  background-image: url(../icons/thumbs-view.svg);
 }
 
 #text-style-toolbar {

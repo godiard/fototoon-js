@@ -154,6 +154,19 @@ define(function (require) {
     function Model(data, canvas, textpalette) {
 
         this._data = data;
+        // this._data have the following fields:
+        // 'version':'1' (don't change, for compatibility with python version)
+        // 'boxs': [] array with the boxes information
+        //      every item have the background properties and a array of globes
+        //
+        //  The next properites are temporary and are not saved:
+        // 'images': are loaded async, then have no garatie of be present.
+        //           we use the fact that the first box do not have a background
+        //           image, and expect that when the user change to the next box
+        //           the images will be charged.
+        // 'previews': loaded from the canvas, will be displayed on the sorting
+        //             mode.
+
         this._canvas = canvas;
         this._textpalette = textpalette;
         this.comicBox = null;
@@ -161,6 +174,7 @@ define(function (require) {
         this._pageCounterDisplay = null;
         this._prevButton = null;
         this._nextButton = null;
+        this._boxSorter = null;
 
         this.init = function() {
             this.activeBox = 0;
@@ -182,6 +196,11 @@ define(function (require) {
                     comic_box_data['globes'].push(titleGlobe);
                 };
             };
+            // init empty previews for every box
+            this._data['previews'] = [];
+            for (var i = 0; i < this._data['boxs'].length; i++) {
+                this._data['previews'].push(null);
+            };
 
             this.comicBox = new ComicBox(this._canvas, comic_box_data,
                                          this._data['images']);
@@ -189,9 +208,18 @@ define(function (require) {
             this.comicBox.attachTextEditionPalette(this._textpalette);
         };
 
+        this.initSort = function() {
+            this._boxSorter = new BoxSorter(this._canvas, this._data);
+            this._boxSorter.init();
+        };
+
         this.changeBox = function(newOrder) {
             if (newOrder >= 0 && newOrder < this._data['boxs'].length) {
                 this._data['boxs'][this.activeBox] = this.comicBox.getJson();
+                // store the preview
+                this._data['previews'][this.activeBox] =
+                    this._canvas.toDataURL("image/png");
+
                 // load the new data
                 this.activeBox = newOrder;
                 this.comicBox.setData(this._data['boxs'][this.activeBox],
@@ -1361,6 +1389,32 @@ define(function (require) {
 
         this.init();
         this.update();
+    };
+
+
+    function BoxSorter(canvas, data) {
+        this.canvas = canvas;
+        this._data = data;
+        this._width = canvas.width - LINE_WIDTH * 2;
+        this._height = canvas.height - LINE_WIDTH * 2;
+
+        this.stage = new createjs.Stage(canvas);
+        // Enable touch interactions if supported on the current device
+        createjs.Touch.enable(this.stage);
+
+        this.init = function () {
+            this._backContainer = new createjs.Container();
+            var background = new createjs.Shape();
+            background.graphics.setStrokeStyle(LINE_WIDTH, "round");
+            background.graphics.beginStroke(
+                BLACK).drawRect(LINE_WIDTH, LINE_WIDTH,
+                                this._width, this._height);
+            this.stage.addChild(this._backContainer);
+            this._backContainer.addChild(background);
+            this._backContainer.cache(0, 0, this.canvas.width, this.canvas.height);
+            this.stage.update();
+        };
+
     };
 
     toon.ComicBox = ComicBox;

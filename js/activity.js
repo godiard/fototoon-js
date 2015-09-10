@@ -163,6 +163,8 @@ define(function (require) {
         toonModel.attachPageCounterViewer(pageCounter);
         toonModel.attachPrevNextButtons(previousButton, nextButton);
 
+        var editMode = true;
+
         var addGlobeButton = document.getElementById("add-globe");
         var menuData = [{'icon': true, 'id': toon.TYPE_GLOBE,
                          'label': _('Globe')},
@@ -314,6 +316,36 @@ define(function (require) {
             saveAs(blob, "new.fototoon");
 
        });
+
+        var sortButton = document.getElementById("sort-button");
+
+        sortButton.addEventListener('click', function (e) {
+            // verify if there are at least 3 boxes
+            // the first box is the title and can't be moved
+            // then only have sense sort with more than 2 boxes
+            if (toonModel.getData()['boxs'].length < 3) {
+                return;
+            };
+            if (editMode) {
+                // resize the canvas
+                mainCanvas.width = window.innerWidth - sugarCellSize * 2;
+                var boxWidth = mainCanvas.width / toonModel.getData()['boxs'].length;
+                mainCanvas.height = boxWidth * 3 / 4;
+                toonModel.initSort();
+                // hide the page counter
+                pageCounter.style.display = "none";
+            } else {
+                // set the edition original size
+                mainCanvas.height = window.innerHeight - sugarCellSize - 5;
+                mainCanvas.width = mainCanvas.height * 4 / 3;
+                pageCounter.style.display = "block";
+                toonModel.init();
+            };
+            mainCanvas.style.left = ((window.innerWidth - mainCanvas.width) / 2) + "px";
+            // switch editMode
+            editMode = ! editMode;
+
+        });
 
     });
 
