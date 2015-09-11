@@ -177,9 +177,11 @@ define(function (require) {
         this._boxSorter = null;
         this._data['previews'] = [];
 
+        this.comicBox = new ComicBox(this._canvas);
+
         this.init = function() {
             this.activeBox = 0;
-            comic_box_data = this._data['boxs'][this.activeBox];
+            var comic_box_data = this._data['boxs'][this.activeBox];
             this._imageCounter = this._data['boxs'].length;
 
             if (this._data['boxs'].length == 1) {
@@ -198,9 +200,7 @@ define(function (require) {
                 };
             };
 
-            this.comicBox = new ComicBox(this._canvas, comic_box_data,
-                                         this._data['images']);
-            this.comicBox.init();
+            this.comicBox.init(comic_box_data, this._data['images']);
             this.comicBox.attachTextEditionPalette(this._textpalette);
             this._updatePageCounter();
         };
@@ -233,7 +233,7 @@ define(function (require) {
 
                 // load the new data
                 this.activeBox = newOrder;
-                this.comicBox.setData(this._data['boxs'][this.activeBox],
+                this.comicBox.init(this._data['boxs'][this.activeBox],
                                       this._data['images']);
 
                 this._updatePageCounter();
@@ -309,11 +309,9 @@ define(function (require) {
 
     };
 
-    function ComicBox(canvas, data, imagesData) {
+    function ComicBox(canvas) {
 
         this.canvas = canvas;
-        this._data = data;
-        this.imagesData = imagesData
         this._width = canvas.width - LINE_WIDTH * 2;
         this._height = canvas.height - LINE_WIDTH * 2;
 
@@ -327,7 +325,11 @@ define(function (require) {
         // reference to the text palette used to edit the text in the globes
         this._textpalette = null;
 
-        this.init = function () {
+        this.init = function (data, imagesData) {
+            this._data = data;
+            this.imagesData = imagesData
+            this.globes = [];
+            this.stage.removeAllChildren();
             this._backContainer = new createjs.Container();
             var background = new createjs.Shape();
             background.graphics.setStrokeStyle(LINE_WIDTH, "round");
@@ -387,14 +389,6 @@ define(function (require) {
             this._backContainer.addChildAt(bitmap, 0);
             this._backContainer.updateCache();
             this.createGlobes();
-        };
-
-        this.setData = function(data, imagesData) {
-            this._data = data;
-            this.imagesData = imagesData
-            this.globes = [];
-            this.stage.removeAllChildren();
-            this.init();
         };
 
         this.attachTextEditionPalette = function(textpalette) {
