@@ -202,6 +202,7 @@ define(function (require) {
                                          this._data['images']);
             this.comicBox.init();
             this.comicBox.attachTextEditionPalette(this._textpalette);
+            this._updatePageCounter();
         };
 
         this.initSort = function(sortCanvas) {
