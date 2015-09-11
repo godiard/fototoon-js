@@ -136,6 +136,7 @@ define(function (require) {
         require("filesaver");
 
         var mainCanvas = document.getElementById("mainCanvas");
+        var sortCanvas = document.getElementById("sortCanvas");
         // remove 5 more to be sure no scrollbars are visible
         mainCanvas.height = window.innerHeight - sugarCellSize - 5;
         mainCanvas.width = mainCanvas.height * 4 / 3;
@@ -329,21 +330,19 @@ define(function (require) {
             if (editMode) {
                 toonModel.storePreview();
                 // resize the canvas
-                mainCanvas.width = window.innerWidth - sugarCellSize * 2;
-                var boxWidth = mainCanvas.width / toonModel.getData()['boxs'].length;
-                mainCanvas.height = boxWidth * 3 / 4;
-                toonModel.initSort();
+                sortCanvas.width = window.innerWidth - sugarCellSize * 2;
+                var boxWidth = sortCanvas.width / toonModel.getData()['boxs'].length;
+                sortCanvas.height = boxWidth * 3 / 4;
+                sortCanvas.style.left = ((window.innerWidth - sortCanvas.width) / 2) + "px";
+                sortCanvas.style.top = ((window.innerHeight - sortCanvas.height) / 2) + "px";
+                toonModel.initSort(sortCanvas);
                 // hide the page counter
                 pageCounter.style.display = "none";
             } else {
                 toonModel.finishSort();
-                // set the edition original size
-                mainCanvas.height = window.innerHeight - sugarCellSize - 5;
-                mainCanvas.width = mainCanvas.height * 4 / 3;
                 pageCounter.style.display = "block";
                 toonModel.init();
             };
-            mainCanvas.style.left = ((window.innerWidth - mainCanvas.width) / 2) + "px";
             // switch editMode
             editMode = ! editMode;
 

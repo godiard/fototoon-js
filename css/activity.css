@@ -116,6 +116,11 @@ background-size: 100% 1.2em;
   position: absolute;
 }
 
+#sortCanvas {
+  background-color: #ffffff;
+  position: absolute;
+}
+
 #page-counter {
   color: #ffffff;
   background-color: #282828;

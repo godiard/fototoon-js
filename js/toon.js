@@ -204,8 +204,10 @@ define(function (require) {
             this.comicBox.attachTextEditionPalette(this._textpalette);
         };
 
-        this.initSort = function() {
-            this._boxSorter = new BoxSorter(this._canvas, this._data);
+        this.initSort = function(sortCanvas) {
+            this._canvas.style.display = 'none';
+
+            this._boxSorter = new BoxSorter(sortCanvas, this._data);
             this._boxSorter.init();
         };
 
@@ -213,6 +215,8 @@ define(function (require) {
             var sortedBoxes = [];
             // get a rray with the new order for the boxes, like [0, 3, 2, 1]
             var newOrders = this._boxSorter.getSortOrder();
+            this._boxSorter.hide();
+            this._canvas.style.display = 'block';
             for (var i = 0; i < newOrders.length; i++) {
                 sortedBoxes.push(this._data['boxs'][newOrders[i]]);
             };
@@ -1411,12 +1415,14 @@ define(function (require) {
         this._height = canvas.height - LINE_WIDTH * 2;
         this._previewWidth = this._height * 4 / 3;
         this._previewBitmaps = [];
+        this._deltaX = null;
 
         this.stage = new createjs.Stage(canvas);
         // Enable touch interactions if supported on the current device
         createjs.Touch.enable(this.stage);
 
         this.init = function () {
+            this.canvas.style.display = 'block';
             this._backContainer = new createjs.Container();
             var background = new createjs.Shape();
             background.graphics.setStrokeStyle(LINE_WIDTH, "round");
@@ -1429,6 +1435,10 @@ define(function (require) {
 
             this.loadPreviews();
             this.stage.update();
+        };
+
+        this.hide = function() {
+            this.canvas.style.display = 'none';
         };
 
         this.loadPreviews = function () {
@@ -1483,20 +1493,21 @@ define(function (require) {
             if (order > 0) {
                 this._previewBitmaps.push(bitmap);
 
-                bitmap.on('mousedown', function(event) {
-                    event.target._deltaX = event.stageX - event.target.x;
-                    var thisBitmap = event.target;
-                    this.stage.sortChildren(function (bitmapA, bitmapB) {
-                        if (bitmapA == thisBitmap) {
-                            return 1;
-                        } else {
-                            return 0;
-                        };});
-                    //this.stage.setChildIndex(event.target);
-                }, this);
-
                 bitmap.on('pressmove', function(event) {
-                    new_x = event.stageX - event.target._deltaX;
+                    console.log('TOON pressmove');
+                    if (this._deltaX == null) {
+                        this._deltaX = event.stageX - event.target.x;
+                        // move the bitmap to the top
+                        var thisBitmap = event.target;
+                        this.stage.sortChildren(function (bitmapA, bitmapB) {
+                            if (bitmapA == thisBitmap) {
+                                return 1;
+                            } else {
+                                return 0;
+                            };});
+                    };
+
+                    new_x = event.stageX - this._deltaX;
                     if (new_x > this._previewWidth / 2) {
                         event.target.x = new_x;
                         this.stage.update();
@@ -1504,6 +1515,8 @@ define(function (require) {
                 }, this);
 
                 bitmap.on('pressup', function(event) {
+                    console.log('TOON pressup');
+                    this._deltaX = null;
                     // sort the preview bitmaps
                     this._previewBitmaps.sort(function (bitmapA, bitmapB) {
                         return bitmapA.x - bitmapB.x;});
