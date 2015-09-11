@@ -1486,7 +1486,7 @@ define(function (require) {
 
             var hitArea = new createjs.Shape();
             hitArea.graphics.beginFill("#000").drawRect(
-                0, 0, this._previewWidth, this._height);
+                0, 0, img.width, img.height);
             bitmap.hitArea = hitArea;
 
             // don't move first box
@@ -1530,6 +1530,7 @@ define(function (require) {
             };
 
             this.stage.addChild(bitmap);
+
         };
 
     };
