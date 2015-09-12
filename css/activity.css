@@ -34,6 +34,14 @@
   background-image: url(../icons/thumbs-view.svg);
 }
 
+#remove-box-button {
+  background-image: url(../icons/remove-picture.svg);
+}
+
+#clean-all-button {
+  background-image: url(../icons/edit-clear.svg);
+}
+
 #text-style-toolbar {
   padding: 0px 25px;
 }
