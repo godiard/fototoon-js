@@ -241,9 +241,14 @@ define(function (require) {
         };
 
         this.storePreview = function() {
+            var previewCanvas = document.createElement('canvas');
+            previewCanvas.width = this._canvas.width;
+            previewCanvas.height = this._canvas.height;
+            var previewComicBox = new ComicBox(previewCanvas);
+            previewComicBox.init(this._data['boxs'][this.activeBox],
+                                 this._data['images']);
             this._data['previews'][this.activeBox] =
-                this._canvas.toDataURL("image/png");
-
+                previewCanvas.toDataURL("image/png");
         };
 
         this._updatePageCounter = function() {
