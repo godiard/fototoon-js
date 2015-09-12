@@ -229,7 +229,7 @@ define(function (require) {
             if (newOrder >= 0 && newOrder < this._data['boxs'].length) {
                 this._data['boxs'][this.activeBox] = this.comicBox.getJson();
                 // store the preview
-                this.storePreview();
+                this.storePreview(this.activeBox);
 
                 // load the new data
                 this.activeBox = newOrder;
@@ -240,14 +240,23 @@ define(function (require) {
             };
         };
 
-        this.storePreview = function() {
+        this.initPreviews = function() {
+            // store the initial preview images
+            for (var i = 0; i < this._data['boxs'].length; i++) {
+                if (this._data['previews'][i] == undefined) {
+                    this.storePreview(i);
+                };
+            };
+        };
+
+        this.storePreview = function(boxOrder) {
             var previewCanvas = document.createElement('canvas');
             previewCanvas.width = this._canvas.width;
             previewCanvas.height = this._canvas.height;
             var previewComicBox = new ComicBox(previewCanvas);
-            previewComicBox.init(this._data['boxs'][this.activeBox],
+            previewComicBox.init(this._data['boxs'][boxOrder],
                                  this._data['images']);
-            this._data['previews'][this.activeBox] =
+            this._data['previews'][boxOrder] =
                 previewCanvas.toDataURL("image/png");
         };
 

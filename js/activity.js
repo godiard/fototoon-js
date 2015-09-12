@@ -328,6 +328,8 @@ define(function (require) {
                 return;
             };
             if (editMode) {
+                toonModel.initPreviews();
+
                 toonModel.storePreview();
                 // resize the canvas
                 sortCanvas.width = window.innerWidth - sugarCellSize * 2;
