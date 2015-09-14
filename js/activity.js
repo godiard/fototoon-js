@@ -259,10 +259,7 @@ define(function (require) {
                             };
                         });
 
-                        toonModel = new toon.Model(data, mainCanvas, tp);
-                        toonModel.init();
-                        toonModel.attachPageCounterViewer(pageCounter);
-                        toonModel.attachPrevNextButtons(previousButton, nextButton);
+                        toonModel.setData(data);
 
                     } catch(e) {
                         console.log('Exception ' + e.message);

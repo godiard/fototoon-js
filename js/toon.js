@@ -207,6 +207,7 @@ define(function (require) {
 
         this.setData = function(data) {
             this._data = data;
+            this._data['previews'] = [];
             this.init();
         };
 
