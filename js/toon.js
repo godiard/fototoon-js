@@ -1567,7 +1567,6 @@ define(function (require) {
 
     };
 
-    toon.ComicBox = ComicBox;
     toon.Model = Model;
 
     toon.TYPE_GLOBE = TYPE_GLOBE;
