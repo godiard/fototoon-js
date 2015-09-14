@@ -335,11 +335,8 @@ define(function (require) {
                 sortCanvas.style.left = ((window.innerWidth - sortCanvas.width) / 2) + "px";
                 sortCanvas.style.top = ((window.innerHeight - sortCanvas.height) / 2) + "px";
                 toonModel.initSort(sortCanvas);
-                // hide the page counter
-                pageCounter.style.display = "none";
             } else {
                 toonModel.finishSort();
-                pageCounter.style.display = "block";
                 toonModel.init();
             };
             // switch editMode
@@ -362,6 +359,10 @@ define(function (require) {
                 _('Yes'), _('No'), function(result) {
                     if (result) {
                         toonModel.setData(initialData);
+                        if (!editMode) {
+                            toonModel.changeToEditMode();
+                            editMode = true;
+                        };
                     };
                 });
         });

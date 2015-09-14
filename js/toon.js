@@ -216,18 +216,30 @@ define(function (require) {
 
             this._boxSorter = new BoxSorter(sortCanvas, this._data);
             this._boxSorter.init();
+            if (this._pageCounterDisplay != null) {
+                // hide the page counter
+                this._pageCounterDisplay.parentNode.style.display = "none";
+            };
         };
 
         this.finishSort = function() {
             var sortedBoxes = [];
             // get a rray with the new order for the boxes, like [0, 3, 2, 1]
             var newOrders = this._boxSorter.getSortOrder();
-            this._boxSorter.hide();
-            this._canvas.style.display = 'block';
+            this.changeToEditMode();
             for (var i = 0; i < newOrders.length; i++) {
                 sortedBoxes.push(this._data['boxs'][newOrders[i]]);
             };
             this._data['boxs'] = sortedBoxes;
+        };
+
+        this.changeToEditMode = function() {
+            this._boxSorter.hide();
+            this._canvas.style.display = 'block';
+            if (this._pageCounterDisplay != null) {
+                // hide the page counter
+                this._pageCounterDisplay.parentNode.style.display = "block";
+            };
 
         };
 
