@@ -207,6 +207,7 @@ define(function (require) {
         this.removeBox = function() {
             // remove the actual box */
             this._data['boxs'].splice(this.activeBox, 1);
+            this._data['previews'] = [];
             if (this.activeBox > this._data['boxs'].length - 1) {
                 this.activeBox --;
             }
