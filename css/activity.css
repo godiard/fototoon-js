@@ -10,6 +10,10 @@
   background-image: url(../icons/document-save.svg);
 }
 
+#image-save {
+  background-image: url(../icons/save-as-image.svg);
+}
+
 #previous-button {
   background-image: url(../icons/go-previous-paired.svg);
 }

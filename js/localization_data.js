@@ -14,6 +14,10 @@ uiStrings = {
 'RemoveAllConfirmMessage': 'Do you want remove all the boxes in your FotoToon?',
 'Yes': 'Yes',
 'No': 'No',
+'OneRow' : 'One row',
+'OneColumn': 'One column',
+'TwoColumns': 'Two columns',
+'SaveAsImage': 'Save as image',
 'SetGlobeText': 'Set globe text'},
 
 'es': {
@@ -29,6 +33,10 @@ uiStrings = {
 'RemoveAllConfirmMessage': '¿Quieres borrar todas las cajas de tu FotoToon?',
 'Yes': 'Si',
 'No': 'No',
+'OneRow' : 'Un renglon',
+'OneColumn': 'Una columna',
+'TwoColumns': 'Dos columnas',
+'SaveAsImage': 'Grabar como imagen',
 'SetGlobeText': 'Editar texto del globo'}
 };
 
