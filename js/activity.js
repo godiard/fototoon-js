@@ -348,12 +348,6 @@ define(function (require) {
 
         });
 
-        var removeBoxButton = document.getElementById("remove-box-button");
-
-        removeBoxButton.addEventListener('click', function (e) {
-
-        });
-
         var cleanAllButton = document.getElementById("clean-all-button");
 
         cleanAllButton.addEventListener('click', function (e) {
