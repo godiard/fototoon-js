@@ -252,7 +252,7 @@ define(function (require) {
                 // load the new data
                 this.activeBox = newOrder;
                 this.comicBox.init(this._data['boxs'][this.activeBox],
-                                      this._data['images']);
+                                   this._data['images'], (this.activeBox > 0));
 
                 this._updatePageCounter();
             };
@@ -277,7 +277,7 @@ define(function (require) {
             previewCanvas.height = this._canvas.height;
             var previewComicBox = new ComicBox(previewCanvas);
             previewComicBox.init(this._data['boxs'][boxOrder],
-                                 this._data['images']);
+                                 this._data['images'], false);
             this._data['previews'][boxOrder] =
                 previewCanvas.toDataURL("image/png");
         };
@@ -362,9 +362,10 @@ define(function (require) {
         // reference to the text palette used to edit the text in the globes
         this._textpalette = null;
 
-        this.init = function (data, imagesData) {
+        this.init = function (data, imagesData, canRemove) {
             this._data = data;
             this.imagesData = imagesData
+            this.canRemove = canRemove;
             this.globes = [];
             this.stage.removeAllChildren();
             this._backContainer = new createjs.Container();
@@ -424,8 +425,33 @@ define(function (require) {
             bitmap.scaleX = scale;
             bitmap.scaleY = scale;
             this._backContainer.addChildAt(bitmap, 0);
-            this._backContainer.updateCache();
-            this.createGlobes();
+
+            // add a trash button
+            if (this.canRemove) {
+                createAsyncBitmapButton(this, './icons/remove.svg',
+                    function(comicBox, button) {
+                        button.x = comicBox._width - button.width;
+                        button.y = comicBox._height - button.height;
+                        button.visible = true;
+                        comicBox._removeButton = button;
+                        comicBox._backContainer.addChildAt(button, 1);
+                        comicBox._backContainer.updateCache();
+
+                        button.on('click', function(event) {
+                            comicBox.remove();
+                        });
+
+                        comicBox.createGlobes();
+                    });
+            } else {
+                this._backContainer.updateCache();
+                this.createGlobes();
+            };
+
+        };
+
+        this.remove  = function() {
+            console.log('remove');
         };
 
         this.attachTextEditionPalette = function(textpalette) {
