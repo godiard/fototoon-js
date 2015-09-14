@@ -260,6 +260,10 @@ define(function (require) {
                         });
 
                         toonModel.setData(data);
+                        if (!editMode) {
+                            toonModel.changeToEditMode();
+                            editMode = true;
+                        };
 
                     } catch(e) {
                         console.log('Exception ' + e.message);
