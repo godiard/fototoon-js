@@ -177,7 +177,7 @@ define(function (require) {
         this._boxSorter = null;
         this._data['previews'] = [];
 
-        this.comicBox = new ComicBox(this._canvas);
+        this.comicBox = new ComicBox(this._canvas, this);
 
         this.init = function() {
             this.activeBox = 0;
@@ -256,6 +256,18 @@ define(function (require) {
 
                 this._updatePageCounter();
             };
+        };
+
+        this.removeBox = function() {
+            // remove the actual box */
+            this._data['boxs'].splice(this.activeBox, 1);
+            if (this.activeBox > this._data['boxs'].length - 1) {
+                this.activeBox --;
+            }
+            this.comicBox.init(this._data['boxs'][this.activeBox],
+                               this._data['images'], (this.activeBox > 0));
+
+            this._updatePageCounter();
         };
 
         this.updateData = function() {
@@ -346,9 +358,12 @@ define(function (require) {
 
     };
 
-    function ComicBox(canvas) {
+    function ComicBox(canvas, model) {
+        /* model is only used to call the removeBox method,
+           the data is set in the init() method */
 
         this.canvas = canvas;
+        this._model = model;
         this._width = canvas.width - LINE_WIDTH * 2;
         this._height = canvas.height - LINE_WIDTH * 2;
 
@@ -452,6 +467,7 @@ define(function (require) {
 
         this.remove  = function() {
             console.log('remove');
+            this._model.removeBox();
         };
 
         this.attachTextEditionPalette = function(textpalette) {
