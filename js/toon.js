@@ -245,7 +245,7 @@ define(function (require) {
 
         this.changeBox = function(newOrder) {
             if (newOrder >= 0 && newOrder < this._data['boxs'].length) {
-                this._data['boxs'][this.activeBox] = this.comicBox.getJson();
+                this.updateData();
                 // store the preview
                 this.storePreview(this.activeBox);
 
@@ -256,6 +256,10 @@ define(function (require) {
 
                 this._updatePageCounter();
             };
+        };
+
+        this.updateData = function() {
+            this._data['boxs'][this.activeBox] = this.comicBox.getJson();
         };
 
         this.initPreviews = function() {
@@ -326,6 +330,7 @@ define(function (require) {
         };
 
         this.getData = function() {
+            this.updateData();
             return this._data;
         };
 
