@@ -205,6 +205,11 @@ define(function (require) {
             this._updatePageCounter();
         };
 
+        this.setData = function(data) {
+            this._data = data;
+            this.init();
+        };
+
         this.initSort = function(sortCanvas) {
             this._canvas.style.display = 'none';
 

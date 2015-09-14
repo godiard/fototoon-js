@@ -10,6 +10,10 @@ uiStrings = {
 'Box': 'Box',
 'Title': 'Title',
 'of' : 'of',
+'ATENTION' : 'ATENTION',
+'RemoveAllConfirmMessage': 'Do you want remove all the boxes in your FotoToon?',
+'Yes': 'Yes',
+'No': 'No',
 'SetGlobeText': 'Set globe text'},
 
 'es': {
@@ -21,6 +25,10 @@ uiStrings = {
 'Box': 'Caja',
 'Title': 'Título',
 'of' : 'de',
+'ATENTION' : 'ATENCIÓN',
+'RemoveAllConfirmMessage': '¿Quieres borrar todas las cajas de tu FotoToon?',
+'Yes': 'Si',
+'No': 'No',
 'SetGlobeText': 'Editar texto del globo'}
 };
 

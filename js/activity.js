@@ -350,6 +350,25 @@ define(function (require) {
 
         });
 
+        var removeBoxButton = document.getElementById("remove-box-button");
+
+        removeBoxButton.addEventListener('click', function (e) {
+
+        });
+
+        var cleanAllButton = document.getElementById("clean-all-button");
+
+        cleanAllButton.addEventListener('click', function (e) {
+
+            activity.showConfirmationAlert(_('ATENTION'),
+                _('RemoveAllConfirmMessage'),
+                _('Yes'), _('No'), function(result) {
+                    if (result) {
+                        toonModel.setData(initialData);
+                    };
+                });
+        });
+
     });
 
 });
