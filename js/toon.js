@@ -58,6 +58,8 @@ define(function (require) {
 
     require("easel");
 
+    require("canvasToBlob");
+
     var localizationData = require("localizationData");
     var lang = navigator.language.substr(0, 2);
 
@@ -354,6 +356,70 @@ define(function (require) {
         this.attachPrevNextButtons = function(prevButton, nextButton) {
             this._prevButton = prevButton;
             this._nextButton = nextButton;
+        };
+
+        this.saveAsImage = function(columns, callback) {
+            /* columns can be '0', '1', or '2'
+               if '0' means show the images in a single row */
+            var cantBoxes = this._data['boxs'].length;
+            var MARGIN = 20;
+            if (columns == '0') {
+                var width = (this._canvas.width + MARGIN) * cantBoxes + MARGIN;
+                var height = this._canvas.height + MARGIN * 2;
+            } else if (columns == '1') {
+                var width = this._canvas.width + MARGIN * 2;
+                var height = (this._canvas.height + MARGIN) * cantBoxes + MARGIN;
+            } else if (columns == '2') {
+                var width = this._canvas.width * 2 + MARGIN * 3;
+                var height = (this._canvas.height + MARGIN) *
+                    Math.ceil(cantBoxes / 2) + MARGIN;
+            };
+            // create the canvas where will draw all
+            var imageCanvas = document.createElement('canvas');
+            imageCanvas.width = width;
+            imageCanvas.height = height;
+            var imageStage = new createjs.Stage(imageCanvas);
+
+            // add a white background
+            var background = new createjs.Shape();
+            background.graphics.beginFill(
+                "#fff").drawRect(0, 0, width, height);
+            imageStage.addChild(background);
+
+            for (var i = 0; i < cantBoxes; i++) {
+                // load the bix image in a temp canvas
+                var tmpCanvas = document.createElement('canvas');
+                tmpCanvas.width = this._canvas.width;
+                tmpCanvas.height = this._canvas.height;
+                var tmpComicBox = new ComicBox(tmpCanvas);
+                tmpComicBox.init(this._data['boxs'][i],
+                                 this._data['images'], false);
+
+                // calculate coordinates
+                if (columns == '0') {
+                    var x = MARGIN + (this._canvas.width + MARGIN) * i;
+                    var y = MARGIN;
+                } else if (columns == '1') {
+                    var x = MARGIN;
+                    var y = MARGIN + (this._canvas.height + MARGIN) * i;
+                } else if (columns == '2') {
+                    var x = MARGIN + (i % 2) * (this._canvas.width + MARGIN);
+                    var y = MARGIN + Math.floor(i / 2) * (this._canvas.height + MARGIN);
+                };
+
+                // add to the image canvas
+                var img = new Image();
+                img.src = tmpCanvas.toDataURL("image/png");
+                bitmap = new createjs.Bitmap(img);
+                bitmap.setBounds(0, 0, img.width, img.height);
+                // calculate scale
+                bitmap.mouseEnabled = false;
+                bitmap.x = x;
+                bitmap.y = y;
+                imageStage.addChild(bitmap);
+            };
+            imageStage.update();
+            imageCanvas.toBlob(callback);
         };
 
     };

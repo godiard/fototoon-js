@@ -328,7 +328,9 @@ define(function (require) {
 
         for (var i = 0; i < simp.buttons.length; i++) {
             simp.buttons[i].addEventListener('click', function(e) {
-                toonModel.saveAsImage(this.id);
+                toonModel.saveAsImage(this.id, function(blob) {
+                    saveAs(blob, "fototoon.png");
+                });
             });
         };
 
