@@ -18,6 +18,8 @@ uiStrings = {
 'OneColumn': 'One column',
 'TwoColumns': 'Two columns',
 'SaveAsImage': 'Save as image',
+'ImageSaved': 'Image saved',
+'TheImageIsSavedInYourGallery': 'The image is available in your tablet Gallery',
 'SetGlobeText': 'Set globe text'},
 
 'es': {
@@ -37,6 +39,8 @@ uiStrings = {
 'OneColumn': 'Una columna',
 'TwoColumns': 'Dos columnas',
 'SaveAsImage': 'Grabar como imagen',
+'ImageSaved': 'Imagen grabada',
+'TheImageIsSavedInYourGallery': 'La imagen está disponible en la Galería de Imágenes',
 'SetGlobeText': 'Editar texto del globo'}
 };
 

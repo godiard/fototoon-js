@@ -330,6 +330,8 @@ define(function (require) {
             simp.buttons[i].addEventListener('click', function(e) {
                 if (onAndroid) {
                     toonModel.saveAsImage(this.id, null);
+                    activity.showAlert(_('ImageSaved'),
+                        _('TheImageIsSavedInYourGallery'), null, null);
                 } else {
                     toonModel.saveAsImage(this.id, function(blob) {
                         saveAs(blob, "fototoon.png");
