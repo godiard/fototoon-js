@@ -157,6 +157,17 @@ define(function (require) {
             this.init();
         };
 
+        this.getTitle = function() {
+            var firstBoxData = this._data['boxs'][0];
+            for (var i = 0; i < firstBoxData['globes'].length; i ++) {
+                var globeData = firstBoxData['globes'][i];
+                if (globeData['title_globe']) {
+                    return globeData['text_text'];
+                }
+            };
+            return '';
+        };
+
         this.initSort = function(sortCanvas) {
             this._canvas.style.display = 'none';
 
@@ -626,7 +637,7 @@ define(function (require) {
                 };
                 globeData['radio'] = globe._radio;
                 globeData['direction'] = globe._direction;
-                globeData['title_globe'] = globe._title_globe;
+                globeData['title_globe'] = globe._isTitleGlobe;
                 // text properties
                 globeData['text_text'] = globe._textViewer.getText();
                 globeData['text_font_description'] =

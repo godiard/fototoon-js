@@ -315,7 +315,7 @@ define(function (require) {
             };
 
             var blob = zip.generate({type:"blob"});
-            saveAs(blob, "new.fototoon");
+            saveAs(blob, toonModel.getTitle() + ".fototoon");
 
         });
 
