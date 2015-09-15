@@ -20,6 +20,8 @@ uiStrings = {
 'SaveAsImage': 'Save as image',
 'ImageSaved': 'Image saved',
 'TheImageIsSavedInYourGallery': 'The image is available in your tablet Gallery',
+'ToonSaved': 'FotoToon saved',
+'FileSavedSuccessfully': 'The file was saved successfully.',
 'SetGlobeText': 'Set globe text'},
 
 'es': {
@@ -41,6 +43,8 @@ uiStrings = {
 'SaveAsImage': 'Grabar como imagen',
 'ImageSaved': 'Imagen grabada',
 'TheImageIsSavedInYourGallery': 'La imagen está disponible en la Galería de Imágenes',
+'ToonSaved': 'FotoToon grabado',
+'FileSavedSuccessfully': 'El archivo fue grabado con éxito.',
 'SetGlobeText': 'Editar texto del globo'}
 };
 

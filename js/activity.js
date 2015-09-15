@@ -134,6 +134,8 @@ define(function (require) {
 
         require("toon");
         require("filesaver");
+        require("persistence");
+        var cordobaIO = new persistence.CordobaIO();
 
         var mainCanvas = document.getElementById("mainCanvas");
         var sortCanvas = document.getElementById("sortCanvas");
@@ -315,8 +317,13 @@ define(function (require) {
             };
 
             var blob = zip.generate({type:"blob"});
-            saveAs(blob, toonModel.getTitle() + ".fototoon");
-
+            if (onAndroid) {
+                cordobaIO.save(blob, toonModel.getTitle() + ".fototoon");
+                activity.showAlert(_('ToonSaved'),
+                    _('FileSavedSuccessfully'), null, null);
+            } else {
+                saveAs(blob, toonModel.getTitle() + ".fototoon");
+            };
         });
 
         var saveImageButton = document.getElementById("image-save");
