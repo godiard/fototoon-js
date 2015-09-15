@@ -364,7 +364,20 @@ define(function (require) {
                 imageStage.addChild(bitmap);
             };
             imageStage.update();
-            imageCanvas.toBlob(callback);
+            if (callback != null) {
+                imageCanvas.toBlob(callback);
+            } else {
+                // use cordova plugin from
+                // https://github.com/devgeeks/Canvas2ImagePlugin
+                window.canvas2ImagePlugin.saveImageDataToLibrary(
+                    function(msg){
+                        console.log(msg);
+                    },
+                    function(err){
+                        console.log(err);
+                    },
+                    imageCanvas);
+            };
         };
 
     };

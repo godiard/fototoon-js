@@ -328,9 +328,13 @@ define(function (require) {
 
         for (var i = 0; i < simp.buttons.length; i++) {
             simp.buttons[i].addEventListener('click', function(e) {
-                toonModel.saveAsImage(this.id, function(blob) {
-                    saveAs(blob, "fototoon.png");
-                });
+                if (onAndroid) {
+                    toonModel.saveAsImage(this.id, null);
+                } else {
+                    toonModel.saveAsImage(this.id, function(blob) {
+                        saveAs(blob, "fototoon.png");
+                    });
+                };
             });
         };
 
