@@ -55,13 +55,11 @@ define(function (require) {
         };
 
         this.getFilesList = function(callback) {
-            console.log('getFilesList');
             var fileList = [];
 
             function onDirResolved(dir) {
                 var reader =dir.createReader();
                 reader.readEntries(function(entries) {
-                    console.log('readEntries');
                     for (var i=0; i<entries.length; i++) {
                         if (entries[i].name.indexOf(".fototoon") != -1) {
                             fileList.push(entries[i].fullPath);
@@ -82,6 +80,31 @@ define(function (require) {
                 onFsResolved, errorHandler);
 
             return fileList;
+        };
+
+        this.read = function(fileName, callback) {
+            // read a file from disk
+
+            function onFileResolved(entry) {
+
+                entry.file(function(file) {
+                    var reader = new FileReader();
+                    reader.onloadend = function(e) {
+                        console.log("Read file: " + fileName);
+                        callback(e.target.result);
+                    };
+                    reader.readAsArrayBuffer(file);
+                });
+            };
+
+            function onFsResolved(fs) {
+                window.resolveLocalFileSystemURL(
+                    cordova.file.externalApplicationStorageDirectory + fileName,
+                    onFileResolved, errorHandler);
+            };
+
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
+                onFsResolved, errorHandler);
         };
 
     };

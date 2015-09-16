@@ -222,9 +222,15 @@ define(function (require) {
         // this part is a fake file selector to use in android
         var fileSelector = document.getElementById('file-selector');
 
-        function selectFile(filePath) {
-            console.log('PATH SELECTED ' + filePath);
+        function selectFile(fileName) {
+            fileName = fileName + '.fototoon';
+            console.log('FILE SELECTED ' + fileName);
             fileSelector.style.display = 'none';
+
+            cordobaIO.read(fileName, function(content) {
+                var zip = new JSZip(content);
+                readFototoonFile(zip);
+            });
 
             mainCanvas.style.display = 'block';
             pageCounter.style.display = 'block';
@@ -245,14 +251,13 @@ define(function (require) {
                 var filePath = fileList[i];
                 var fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
                 fileName = fileName.substring(0, fileName.indexOf('.fototoon'));
-                content = content + '<button id="' + filePath + '">' +
+                content = content + '<button id="' + fileName + '">' +
                     fileName + '</button><br/>';
             };
 
             fileSelector.style.left = ((window.innerWidth - 500) / 2) + "px";
 
             fileSelector.style.display = 'block';
-            console.log(content);
             fileSelector.innerHTML = content;
             var buttons = fileSelector.querySelectorAll('button');
             for (var i = 0; i < buttons.length; i++) {
@@ -276,6 +281,40 @@ define(function (require) {
             this.value = null;
         });
 
+        function readFototoonFile(zip) {
+            // read the content of the file with JSZip
+            var data = {};
+            // NOTE: This code assume data.json file
+            // is stored before the images
+            $.each(zip.files, function (index, zipEntry) {
+                console.log('reading ' + zipEntry.name);
+                if (zipEntry.name == 'data.json') {
+                    data = JSON.parse(zipEntry.asText());
+                    if (data['images'] == undefined) {
+                        data['images'] = {};
+                    };
+                } else {
+                    // load the image data in a blob, and read
+                    // with a filereader to store as a data url
+                    var imageBlob = new Blob(
+                        [zipEntry.asArrayBuffer()], {type: 'image/png'});
+                    var reader = new FileReader();
+                    reader.onloadend = (function () {
+                        // store the image data in the model data
+                        data['images'][zipEntry.name] = reader.result;
+                    });
+                    reader.readAsDataURL(imageBlob);
+                };
+            });
+
+            toonModel.setData(data);
+            if (!editMode) {
+                toonModel.changeToEditMode();
+                editMode = true;
+            };
+
+        };
+
         toonChooser.addEventListener('change', function (event) {
             // Read file here.
             var reader = new FileReader();
@@ -284,36 +323,7 @@ define(function (require) {
                     try {
                         // read the content of the file with JSZip
                         var zip = new JSZip(e.target.result);
-                        var data = {};
-                        // NOTE: This code assume data.json file
-                        // is stored before the images
-                        $.each(zip.files, function (index, zipEntry) {
-                            console.log('reading ' + zipEntry.name);
-                            if (zipEntry.name == 'data.json') {
-                                data = JSON.parse(zipEntry.asText());
-                                if (data['images'] == undefined) {
-                                    data['images'] = {};
-                                };
-                            } else {
-                                // load the image data in a blob, and read
-                                // with a filereader to store as a data url
-                                var imageBlob = new Blob(
-                                    [zipEntry.asArrayBuffer()], {type: 'image/png'});
-                                var reader = new FileReader();
-                                reader.onloadend = (function () {
-                                    // store the image data in the model data
-                                    data['images'][zipEntry.name] = reader.result;
-                                });
-                                reader.readAsDataURL(imageBlob);
-                            };
-                        });
-
-                        toonModel.setData(data);
-                        if (!editMode) {
-                            toonModel.changeToEditMode();
-                            editMode = true;
-                        };
-
+                        readFototoonFile(zip);
                     } catch(e) {
                         console.log('Exception ' + e.message);
                         console.log('Reading file ' + theFile.name);
