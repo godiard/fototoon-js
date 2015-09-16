@@ -359,6 +359,13 @@ define(function (require) {
 
             // zip.file("data.json", JSON.stringify(toonModel.getData()));
 
+            if (!editMode) {
+                toonModel.finishSort();
+                toonModel.init();
+                editMode = true;
+            };
+
+            this.finishSort
             // clone the data to remove the images
             var dataWithoutImages = {}
             dataWithoutImages['version'] = toonModel.getData()['version'];
