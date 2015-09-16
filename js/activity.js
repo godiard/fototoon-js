@@ -234,6 +234,9 @@ define(function (require) {
             mainCanvas.style.display = 'none';
             sortCanvas.style.display = 'none';
             pageCounter.style.display = 'none';
+            if (fileList.length == 0) {
+                fileList.push('File not found' + '.fototoon')
+            };
             // create file list entries
             var content = '';
             for (var i = 0; i < fileList.length; i++) {
@@ -260,25 +263,12 @@ define(function (require) {
         var openButton = document.getElementById("doc-open");
         openButton.addEventListener('click', function (e) {
             if (onAndroid) {
-                var fileList = cordobaIO.getFilesList();
-                /*
-                // TODO: FAKE list for test
-                var fileList = ['/home/gonzalo/test/one.fototoon',
-                                '/home/gonzalo/test/two.fototoon',
-                                '/home/gonzalo/test/three.fototoon',
-                                '/home/gonzalo/test/four.fototoon'];
-                */
-                console.log('fileList ' + fileList);
-                startFileSelection(fileList);
-
+                cordobaIO.getFilesList(startFileSelection);
             } else {
                 toonChooser.focus();
                 toonChooser.click();
             };
         });
-
-
-
 
         toonChooser.addEventListener('click', function (event) {
             this.value = null;

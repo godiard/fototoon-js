@@ -33,16 +33,55 @@ define(function (require) {
     function CordobaIO(parent) {
 
         this.save = function(content, fileName) {
-            // save aa file to disk
-            window.resolveLocalFileSystemURL(
-                cordova.file.externalApplicationStorageDirectory, function(dir) {
-                dir.getFile(fileName, {create:true}, function(file) {
+            // save a file to disk
 
+            function onDirResolved(dir) {
+                dir.getFile(fileName, {create:true}, function(file) {
                     file.createWriter(function(fileWriter) {
                         fileWriter.write(content);
+                        console.log('FILE SAVED ' + fileName);
                     }, errorHandler);
                 });
-            });
+            };
+
+            function onFsResolved(fs) {
+                window.resolveLocalFileSystemURL(
+                    cordova.file.externalApplicationStorageDirectory,
+                    onDirResolved, errorHandler);
+            };
+
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
+                onFsResolved, errorHandler);
+        };
+
+        this.getFilesList = function(callback) {
+            console.log('getFilesList');
+            var fileList = [];
+
+            function onDirResolved(dir) {
+                var reader =dir.createReader();
+                reader.readEntries(function(entries) {
+                    console.log('readEntries');
+                    for (var i=0; i<entries.length; i++) {
+                        if (entries[i].name.indexOf(".fototoon") != -1) {
+                            fileList.push(entries[i].fullPath);
+                        };
+                    };
+                    console.log('fileList ' + fileList);
+                    callback(fileList);
+                }, errorHandler);
+            };
+
+            function onFsResolved(fs) {
+                window.resolveLocalFileSystemURL(
+                    cordova.file.externalApplicationStorageDirectory,
+                    onDirResolved, errorHandler);
+            };
+
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
+                onFsResolved, errorHandler);
+
+            return fileList;
         };
 
     };
