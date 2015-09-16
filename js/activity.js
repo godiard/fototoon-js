@@ -231,12 +231,14 @@ define(function (require) {
         };
 
         function startFileSelection(fileList) {
+            if (fileList.length == 0) {
+                activity.showAlert(_('FileNotFound'), '', null, null);
+                return;
+            };
             mainCanvas.style.display = 'none';
             sortCanvas.style.display = 'none';
             pageCounter.style.display = 'none';
-            if (fileList.length == 0) {
-                fileList.push('File not found' + '.fototoon')
-            };
+
             // create file list entries
             var content = '';
             for (var i = 0; i < fileList.length; i++) {
