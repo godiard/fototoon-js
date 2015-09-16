@@ -163,7 +163,7 @@ background-size: 100% 1.2em;
 
 #file-selector {
   position: absolute;
-  top: 100px;
+  top: 0px;
 }
 
 #file-selector button {
@@ -174,7 +174,7 @@ background-size: 100% 1.2em;
   padding: 5px;
   height: 50px;
   width: 500px;
-  margin: 10px;
+  margin: 5px;
 }
 
 #file-selector button:hover {
