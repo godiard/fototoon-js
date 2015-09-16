@@ -163,7 +163,8 @@ background-size: 100% 1.2em;
 
 #file-selector {
   position: absolute;
-  top: 0px;
+  top: 10px;
+  width: 600px;
 }
 
 #file-selector button {
@@ -181,4 +182,20 @@ background-size: 100% 1.2em;
   color: black;
   background-color: white;
   border-color: #c0c0c0;
+}
+
+#file-selector #exit-file-selector {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  margin: 0px;
+  top: 0px;
+  right: 25px;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+#file-selector button:hover {
+  background-color: transparent;
+  border-color: transparent;
 }

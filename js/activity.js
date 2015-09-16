@@ -224,14 +224,16 @@ define(function (require) {
 
         function selectFile(fileName) {
             fileName = fileName + '.fototoon';
-            console.log('FILE SELECTED ' + fileName);
-            fileSelector.style.display = 'none';
-
             cordobaIO.read(fileName, function(content) {
                 var zip = new JSZip(content);
                 readFototoonFile(zip);
             });
 
+            closeSelector();
+        };
+
+        function closeSelector() {
+            fileSelector.style.display = 'none';
             mainCanvas.style.display = 'block';
             pageCounter.style.display = 'block';
         };
@@ -255,15 +257,26 @@ define(function (require) {
                     fileName + '</button><br/>';
             };
 
+            // add a button to close the file selector
+            content = content + '<button id="exit-file-selector">' +
+                '<img src="./icons/dialog-cancel-black.svg">'
+                '</button>';
+
             fileSelector.style.left = ((window.innerWidth - 500) / 2) + "px";
 
             fileSelector.style.display = 'block';
             fileSelector.innerHTML = content;
             var buttons = fileSelector.querySelectorAll('button');
             for (var i = 0; i < buttons.length; i++) {
-                buttons[i].addEventListener('click', function(e) {
-                    selectFile(e.target.id)
-                });
+                if (buttons[i].id != 'exit-file-selector') {
+                    buttons[i].addEventListener('click', function(e) {
+                        selectFile(e.target.id);
+                    });
+                } else {
+                    buttons[i].addEventListener('click', function(e) {
+                        closeSelector();
+                    });
+                };
             };
         };
 
