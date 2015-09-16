@@ -219,11 +219,66 @@ define(function (require) {
         var JSZip = require("jszip");
         var toonChooser = document.getElementById('fototoon-loader');
 
+        // this part is a fake file selector to use in android
+        var fileSelector = document.getElementById('file-selector');
+
+        function selectFile(filePath) {
+            console.log('PATH SELECTED ' + filePath);
+            fileSelector.style.display = 'none';
+
+            mainCanvas.style.display = 'block';
+            pageCounter.style.display = 'block';
+        };
+
+        function startFileSelection(fileList) {
+            mainCanvas.style.display = 'none';
+            sortCanvas.style.display = 'none';
+            pageCounter.style.display = 'none';
+            // create file list entries
+            var content = '';
+            for (var i = 0; i < fileList.length; i++) {
+                var filePath = fileList[i];
+                var fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+                fileName = fileName.substring(0, fileName.indexOf('.fototoon'));
+                content = content + '<button id="' + filePath + '">' +
+                    fileName + '</button><br/>';
+            };
+
+            fileSelector.style.left = ((window.innerWidth - 500) / 2) + "px";
+
+            fileSelector.style.display = 'block';
+            console.log(content);
+            fileSelector.innerHTML = content;
+            var buttons = fileSelector.querySelectorAll('button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].addEventListener('click', function(e) {
+                    selectFile(e.target.id)
+                });
+            };
+        };
+
         var openButton = document.getElementById("doc-open");
         openButton.addEventListener('click', function (e) {
-            toonChooser.focus();
-            toonChooser.click();
+            if (onAndroid) {
+                var fileList = cordobaIO.getFilesList();
+                /*
+                // TODO: FAKE list for test
+                var fileList = ['/home/gonzalo/test/one.fototoon',
+                                '/home/gonzalo/test/two.fototoon',
+                                '/home/gonzalo/test/three.fototoon',
+                                '/home/gonzalo/test/four.fototoon'];
+                */
+                console.log('fileList ' + fileList);
+                startFileSelection(fileList);
+
+            } else {
+                toonChooser.focus();
+                toonChooser.click();
+            };
         });
+
+
+
 
         toonChooser.addEventListener('click', function (event) {
             this.value = null;
