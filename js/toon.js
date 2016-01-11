@@ -121,6 +121,7 @@ define(function (require) {
         this._prevButton = null;
         this._nextButton = null;
         this._boxSorter = null;
+        this._sortButton = null;
         this._data['previews'] = [];
 
         // wait dialog
@@ -271,6 +272,9 @@ define(function (require) {
                 this._nextButton.disabled = (this.activeBox ==
                                              (this._data['boxs'].length - 1));
             };
+            if (this._sortButton != null) {
+                this._sortButton.disabled = this._data['boxs'].length < 3;
+            }
         };
 
         this.addGlobe = function(globeType) {
@@ -319,6 +323,12 @@ define(function (require) {
         this.attachPrevNextButtons = function(prevButton, nextButton) {
             this._prevButton = prevButton;
             this._nextButton = nextButton;
+            this._updatePageCounter();
+        };
+
+        this.attachSortButton = function(sortButton) {
+            this._sortButton = sortButton;
+            this._updatePageCounter();
         };
 
         this.saveAsImage = function(columns, callback) {

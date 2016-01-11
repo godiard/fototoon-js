@@ -79,6 +79,12 @@ a {
 .toolbar .toolbutton.invoker:before {
   background-image: url('../icons/emblems/arrow-down.svg');
 }
+
+.toolbar .toolbutton:disabled {
+   opacity: .4;
+   background-color: transparent;
+}
+
 .toolbar #stop-button {
   background-image: url('../icons/actions/activity-stop.svg');
 }

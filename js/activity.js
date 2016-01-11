@@ -161,6 +161,7 @@ define(function (require) {
        // page counter
         var pageCounter = document.getElementById("page-counter");
 
+
         var toonModel = new toon.Model(initialData, mainCanvas, tp);
         toonModel.init();
         toonModel.attachPageCounterViewer(pageCounter);
@@ -427,6 +428,7 @@ define(function (require) {
         };
 
         var sortButton = document.getElementById("sort-button");
+        toonModel.attachSortButton(sortButton);
 
         sortButton.addEventListener('click', function (e) {
             // verify if there are at least 3 boxes
