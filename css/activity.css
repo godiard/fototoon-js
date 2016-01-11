@@ -132,13 +132,13 @@ background-size: 100% 1.2em;
 #page-counter {
   color: #ffffff;
   background-color: #282828;
-  width: 120px;
-  height: 120px;
+  width: 80px;
+  height: 80px;
   border: solid 2px  white;
   border-radius: 60px;
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 10px;
+  right: 10px;
   text-align: center;
 }
 
@@ -146,10 +146,10 @@ background-size: 100% 1.2em;
   display: inline-block;
   vertical-align: middle;
   /* css trick: line-height bigger than div height to show centered :/ */
-  line-height: 120px;
+  line-height: 80px;
   font-family: Sans;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 #wait {
