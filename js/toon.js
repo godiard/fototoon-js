@@ -123,6 +123,9 @@ define(function (require) {
         this._boxSorter = null;
         this._data['previews'] = [];
 
+        // wait dialog
+        this._waitMsg = document.getElementById("wait");
+
         this.comicBox = new ComicBox(this._canvas, this);
 
         this.init = function() {
@@ -155,6 +158,14 @@ define(function (require) {
             this._data = data;
             this._data['previews'] = [];
             this.init();
+        };
+
+        this.showWait = function () {
+            this._waitMsg.style.display = 'block';
+        };
+
+        this.hideWait = function () {
+            this._waitMsg.style.display = 'none';
         };
 
         this.getTitle = function() {
@@ -317,6 +328,7 @@ define(function (require) {
         this.saveAsImage = function(columns, callback) {
             /* columns can be '0', '1', or '2'
                if '0' means show the images in a single row */
+            this.showWait();
             var cantBoxes = this._data['boxs'].length;
             var MARGIN = 20;
             if (columns == '0') {
@@ -389,6 +401,7 @@ define(function (require) {
                     },
                     imageCanvas);
             };
+            this.hideWait();
         };
 
     };

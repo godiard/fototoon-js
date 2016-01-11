@@ -224,12 +224,13 @@ define(function (require) {
 
         function selectFile(fileName) {
             fileName = fileName + '.fototoon';
+            toonModel.showWait();
             cordobaIO.read(fileName, function(content) {
+                closeSelector();
                 var zip = new JSZip(content);
                 readFototoonFile(zip);
+                toonModel.hideWait();
             });
-
-            closeSelector();
         };
 
         function closeSelector() {
@@ -364,6 +365,7 @@ define(function (require) {
 
         var saveButton = document.getElementById("doc-save");
         saveButton.addEventListener('click', function (e) {
+            toonModel.showWait();
             zip = new JSZip();
             // this line is enough to read the file on the js version
             // because the images data is stored as data uris.
@@ -400,6 +402,7 @@ define(function (require) {
             } else {
                 saveAs(blob, toonModel.getTitle() + ".fototoon");
             };
+            toonModel.hideWait();
         });
 
         var saveImageButton = document.getElementById("image-save");
