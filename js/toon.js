@@ -499,7 +499,7 @@ define(function (require) {
             if (this.canRemove) {
                 createAsyncBitmapButton(this, './icons/remove.svg',
                     function(comicBox, button) {
-                        button.x = comicBox._width - button.width;
+                        button.x = 0;
                         button.y = comicBox._height - button.height;
                         button.visible = true;
                         comicBox._removeButton = button;
