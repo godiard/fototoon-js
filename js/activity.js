@@ -435,10 +435,9 @@ define(function (require) {
             if (toonModel.getData()['boxs'].length < 3) {
                 return;
             };
+            toonModel.showWait();
             if (editMode) {
                 toonModel.initPreviews();
-
-                toonModel.storePreview();
                 // resize the canvas
                 sortCanvas.width = window.innerWidth - sugarCellSize * 2;
                 var boxWidth = sortCanvas.width / toonModel.getData()['boxs'].length;
@@ -450,6 +449,7 @@ define(function (require) {
                 toonModel.finishSort();
                 toonModel.init();
             };
+            toonModel.hideWait();
             // switch editMode
             editMode = ! editMode;
 

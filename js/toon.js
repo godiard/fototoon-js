@@ -214,8 +214,6 @@ define(function (require) {
         this.changeBox = function(newOrder) {
             if (newOrder >= 0 && newOrder < this._data['boxs'].length) {
                 this.updateData();
-                // store the preview
-                this.storePreview(this.activeBox);
 
                 // load the new data
                 this.activeBox = newOrder;
@@ -246,9 +244,7 @@ define(function (require) {
         this.initPreviews = function() {
             // store the initial preview images
             for (var i = 0; i < this._data['boxs'].length; i++) {
-                if (this._data['previews'][i] == undefined) {
-                    this.storePreview(i);
-                };
+                this.storePreview(i);
             };
         };
 
