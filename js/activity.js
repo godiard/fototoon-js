@@ -378,7 +378,6 @@ define(function (require) {
                 editMode = true;
             };
 
-            this.finishSort
             // clone the data to remove the images
             var dataWithoutImages = {}
             dataWithoutImages['version'] = toonModel.getData()['version'];
